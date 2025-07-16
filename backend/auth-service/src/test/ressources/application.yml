@@ -1,3 +1,0 @@
-jwt:
-  secret: "test-secret-key-which-should-be-32-bytes"
-  expiration: 3600000
