@@ -11,7 +11,7 @@ services:
       ALLOW_ANONYMOUS_LOGIN: "yes"
 
   kafka:
-    image: bitnami/kafka:latest
+    image: bitnami/kafka:3.5
     container_name: kafka
     ports:
       - "9092:9092"
@@ -20,6 +20,8 @@ services:
       KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_ENABLE_KRAFT: no
     depends_on:
       - zookeeper
 
@@ -28,9 +30,9 @@ services:
     image: postgres:14
     container_name: postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: url_shortener
+      POSTGRES_USER: ${POSTGRESQL_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
+      POSTGRES_DB: ${POSTGRESQL_DB_NAME}
     ports:
       - "5432:5432"
     volumes:
@@ -49,6 +51,23 @@ services:
       - VITE_URL_SHORTENER_JWT_SECRET=${VITE_URL_SHORTENER_JWT_SECRET}
     depends_on:
       - postgres
+
+  # URL Service
+  url-service:
+    build: ./backend/url-service
+    container_name: url-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - VITE_URL_SHORTENER_JWT_SECRET=${VITE_URL_SHORTENER_JWT_SECRET}
+      - KAFKA_URL=kafka:9092
+      - DATABASE_USERNAME=${POSTGRESQL_USERNAME}
+      - DATABASE_PASSWORD=${POSTGRESQL_PASSWORD}
+      - DATABASE_URL=${DATABASE_JDBC_URL}
+    depends_on:
+      - postgres
+      - kafka
 
 volumes:
   pgdata:
