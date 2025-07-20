@@ -46,7 +46,8 @@ services:
       - SPRING_PROFILES_ACTIVE=dev
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - VITE_URL_SHORTENER_JWT_SECRET=${VITE_URL_SHORTENER_JWT_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
+      - SERVER_PORT=8081
     depends_on:
       - postgres
 
@@ -58,11 +59,12 @@ services:
       - "8082:8082"
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-      - VITE_URL_SHORTENER_JWT_SECRET=${VITE_URL_SHORTENER_JWT_SECRET}
+      - JWT_SECRET=${JWT_SECRET}
       - KAFKA_URL=kafka:9092
       - DATABASE_USERNAME=${POSTGRESQL_USERNAME}
       - DATABASE_PASSWORD=${POSTGRESQL_PASSWORD}
       - DATABASE_URL=${DATABASE_JDBC_URL}
+      - SERVER_PORT=8082
     depends_on:
       - postgres
       - kafka
@@ -79,6 +81,24 @@ services:
       - DATABASE_USERNAME=${POSTGRESQL_USERNAME}
       - DATABASE_PASSWORD=${POSTGRESQL_PASSWORD}
       - DATABASE_URL=${DATABASE_JDBC_URL}
+      - SERVER_PORT=8083
+    depends_on:
+      - postgres
+      - kafka
+
+  # Analytics Service
+  analytics-service:
+    build: ./backend/analytics-service
+    container_name: analytics-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - KAFKA_URL=kafka:9092
+      - DATABASE_USERNAME=${POSTGRESQL_USERNAME}
+      - DATABASE_PASSWORD=${POSTGRESQL_PASSWORD}
+      - DATABASE_URL=${DATABASE_JDBC_URL}
+      - SERVER_PORT=8084
     depends_on:
       - postgres
       - kafka

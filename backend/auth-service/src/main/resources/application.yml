@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: ${SERVER_PORT}
 
 spring:
   security:
@@ -20,5 +20,5 @@ spring:
             user-name-attribute: sub
 
 jwt:
-  secret: ${VITE_URL_SHORTENER_JWT_SECRET}
+  secret: ${JWT_SECRET}
   expiration: 3600000
