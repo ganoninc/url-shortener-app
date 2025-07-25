@@ -16,7 +16,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth -> oauth
-                        .defaultSuccessUrl("/auth/token", true)
+                        .defaultSuccessUrl("/identity/token", true)
                 );
 
         return http.build();

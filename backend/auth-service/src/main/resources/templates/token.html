@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <script>
+      if (window.opener){
+        window.opener.postMessage(
+          {
+            token: "[[${token}]]",
+            email: "[[${email}]]",
+          },
+          "[[${frontendOrigin}]]"
+        );
+      }
+      window.close();
+    </script>
+  </body>
+</html>

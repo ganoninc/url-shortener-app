@@ -1,5 +1,7 @@
 server:
   port: ${SERVER_PORT}
+  servlet:
+    context-path: /auth
 
 spring:
   security:
@@ -22,3 +24,6 @@ spring:
 jwt:
   secret: ${JWT_SECRET}
   expiration: 3600000
+
+app:
+  frontend-origin: ${FRONTEND_ORIGIN}
