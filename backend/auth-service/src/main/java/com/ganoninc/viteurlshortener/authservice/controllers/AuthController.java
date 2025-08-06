@@ -7,10 +7,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/identity")
 public class AuthController {
 
     private final JwtUtils jwtUtils;
@@ -21,8 +19,8 @@ public class AuthController {
         this.appProperties = appProperties;
     }
 
-    @GetMapping("/token")
-    public String getToken(Model model, @AuthenticationPrincipal OAuth2User user) {
+    @GetMapping("/oauth-callback")
+    public String handleOAuthCallback(Model model, @AuthenticationPrincipal OAuth2User user) {
         String email = user.getAttribute("email");
         String token = jwtUtils.generateToken(email);
 
@@ -30,6 +28,6 @@ public class AuthController {
         model.addAttribute("email", email);
         model.addAttribute("frontendOrigin", appProperties.getFrontendOrigin());
 
-        return "token";
+        return "oauth-callback";
     }
 }

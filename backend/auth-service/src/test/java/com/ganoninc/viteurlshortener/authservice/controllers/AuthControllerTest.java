@@ -5,7 +5,6 @@ import com.ganoninc.viteurlshortener.authservice.utils.JwtUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -33,7 +32,7 @@ public class AuthControllerTest {
 
 
     @Test
-    void shouldReturnTokenViewWithModelAttributes() throws Exception {
+    void shouldReturnOauthCallbackViewWithModelAttributes() throws Exception {
         String email = "test@gmail.com";
         String token = "jwt-token";
         String frontendOrigin = "http://localhost:8080";
@@ -47,9 +46,9 @@ public class AuthControllerTest {
                 "email"
         );
 
-        mvc.perform(MockMvcRequestBuilders.get("/identity/token").with(oauth2Login().oauth2User(oAuth2User)))
+        mvc.perform(MockMvcRequestBuilders.get("/oauth-callback").with(oauth2Login().oauth2User(oAuth2User)))
                 .andExpect(status().isOk())
-                .andExpect(view().name("token"))
+                .andExpect(view().name("oauth-callback"))
                 .andExpect(model().attribute("token", token))
                 .andExpect(model().attribute("email", email))
                 .andExpect(model().attribute("frontendOrigin", frontendOrigin));
