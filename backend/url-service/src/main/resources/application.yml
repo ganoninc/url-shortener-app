@@ -1,5 +1,7 @@
 server:
   port: ${SERVER_PORT}
+  servlet:
+    context-path: /url
 
 spring:
   datasource:
@@ -10,6 +12,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    open-in-view: false
   kafka:
     bootstrap-servers: ${KAFKA_URL}
     producer:
