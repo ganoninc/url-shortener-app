@@ -1,8 +1,6 @@
 server:
   port: ${SERVER_PORT}
-  forward-headers-strategy: native
-  servlet:
-    context-path: /auth
+  forward-headers-strategy: framework
 
 spring:
   security:

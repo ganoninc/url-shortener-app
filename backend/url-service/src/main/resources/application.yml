@@ -1,7 +1,6 @@
 server:
   port: ${SERVER_PORT}
-  servlet:
-    context-path: /url
+  forward-headers-strategy: framework
 
 spring:
   datasource:
