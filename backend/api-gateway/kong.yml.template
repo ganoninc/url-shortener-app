@@ -1,0 +1,52 @@
+_format_version: "3.0"
+_transform: true
+
+consumers:
+  - username: "auth-service"
+
+jwt_secrets:
+  - consumer: "auth-service"
+    key: "auth-service"
+    secret: "${JWT_SECRET}"
+    algorithm: "HS256"
+
+services:
+  - name: auth-service
+    url: http://auth-service:8081
+    routes:
+      - name: auth-route
+        paths:
+          - /auth
+        strip_path: true
+
+  - name: url-service
+    url: http://url-service:8082
+    routes:
+      - name: url-route
+        paths:
+          - /url
+        strip_path: true
+        plugins:
+          - name: jwt
+            config:
+              claims_to_verify:
+                - exp
+              key_claim_name: iss
+          - name: jwt-claims-headers
+            config: {}
+
+  - name: httpbin
+    url: https://httpbin.konghq.com
+    routes:
+      - name: httpbin-route
+        paths:
+          - /httpbin
+        strip_path: true
+        plugins:
+          - name: jwt
+            config:
+              claims_to_verify:
+                - exp
+              key_claim_name: iss
+          - name: jwt-claims-headers
+            config: {}

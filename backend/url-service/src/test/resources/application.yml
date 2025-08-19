@@ -15,6 +15,3 @@ spring:
 
   kafka:
     bootstrap-servers: embedded  # Placeholder – use @EmbeddedKafka or mocks
-
-jwt:
-  secret: "test-secret-key-which-should-be-32-bytes"

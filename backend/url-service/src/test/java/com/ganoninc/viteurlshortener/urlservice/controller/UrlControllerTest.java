@@ -3,14 +3,12 @@ package com.ganoninc.viteurlshortener.urlservice.controller;
 import com.ganoninc.viteurlshortener.urlservice.dto.ShortenURLRequestDTO;
 import com.ganoninc.viteurlshortener.urlservice.model.UrlMapping;
 import com.ganoninc.viteurlshortener.urlservice.service.UrlService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.List;
 import java.util.Map;
@@ -26,16 +24,8 @@ public class UrlControllerTest {
     @Mock
     private UrlService urlService;
 
-    @Mock
-    private Jwt jwt;
-
     @InjectMocks
     private UrlController urlController;
-
-    @BeforeEach
-    void setUp() {
-        when(jwt.getSubject()).thenReturn(testEmail);
-    }
 
     @Test
     void itShouldReturnShortIdWhenUrlIsShortened() {
@@ -46,9 +36,9 @@ public class UrlControllerTest {
         UrlMapping urlMapping = new UrlMapping();
         urlMapping.setShortId("testId01");
 
-        when(urlService.createUrlMapping(longUrl, jwt.getSubject())).thenReturn(urlMapping);
+        when(urlService.createUrlMapping(longUrl, testEmail)).thenReturn(urlMapping);
 
-        ResponseEntity<?> response = urlController.shortenUrl(shortenURLRequestDTO, jwt);
+        ResponseEntity<?> response = urlController.shortenUrl(shortenURLRequestDTO, testEmail);
 
         assertEquals(200, response.getStatusCode().value());
         assertInstanceOf(Map.class, response.getBody());
@@ -66,7 +56,7 @@ public class UrlControllerTest {
 
         when(urlService.getUserUrls(testEmail)).thenReturn(urlMappings);
 
-        List<UrlMapping> response = urlController.getMyUrls(jwt);
+        List<UrlMapping> response = urlController.getMyUrls(testEmail);
 
         assertEquals(2, response.size());
         assertEquals(response.get(0).getShortId(), urlMapping1.getShortId());

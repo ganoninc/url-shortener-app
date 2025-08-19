@@ -5,8 +5,6 @@ import com.ganoninc.viteurlshortener.urlservice.model.UrlMapping;
 import com.ganoninc.viteurlshortener.urlservice.service.UrlService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +20,7 @@ public class UrlController {
     }
 
     @PostMapping("/shorten")
-    public ResponseEntity<?> shortenUrl(@RequestBody @Valid ShortenURLRequestDTO requestDTO, @AuthenticationPrincipal Jwt jwt) {
-        String userEmail = jwt.getSubject();
+    public ResponseEntity<?> shortenUrl(@RequestBody @Valid ShortenURLRequestDTO requestDTO, @RequestHeader("X-User-Sub") String userEmail) {
         String url = requestDTO.getOriginalUrl();
 
         UrlMapping urlMapping = urlService.createUrlMapping(url, userEmail);
@@ -31,7 +28,7 @@ public class UrlController {
     }
 
     @GetMapping("/my-urls")
-    public List<UrlMapping> getMyUrls(@AuthenticationPrincipal Jwt jwt){
-        return urlService.getUserUrls(jwt.getSubject());
+    public List<UrlMapping> getMyUrls(@RequestHeader("X-User-Sub") String userEmail) {
+        return urlService.getUserUrls(userEmail);
     }
 }

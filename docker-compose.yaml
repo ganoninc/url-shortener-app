@@ -54,7 +54,6 @@ services:
     container_name: url-service
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-      - JWT_SECRET=${JWT_SECRET}
       - KAFKA_URL=kafka:9092
       - DATABASE_USERNAME=${POSTGRESQL_USERNAME}
       - DATABASE_PASSWORD=${POSTGRESQL_PASSWORD}
@@ -94,11 +93,13 @@ services:
       - postgres
       - kafka
 
-  kong:
+  api-gateway:
     build: ./backend/api-gateway
     container_name: api-gateway
     ports:
       - "80:80"
+      # - "8001:8001"
+      # - "8002:8002"
     environment:
       KONG_PROXY_LISTEN: 0.0.0.0:80
       KONG_ADMIN_LISTEN: 0.0.0.0:8001
@@ -106,8 +107,9 @@ services:
       KONG_DATABASE: "off"
       KONG_VAULTS: "env"
       KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
-      KONG_PLUGINS: bundled,jwt
+      KONG_PLUGINS: bundled,jwt,jwt-claims-headers
       JWT_SECRET: ${JWT_SECRET}
+      KONG_LOG_LEVEL: debug
     volumes:
       - ./backend/api-gateway/kong.yml.template:/kong/declarative/kong.yml.template:ro
       - ./backend/api-gateway/docker-entrypoint.sh:/docker-entrypoint.sh:ro
