@@ -38,5 +38,4 @@ public class RedirectController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
-
 }

@@ -35,18 +35,25 @@ services:
           - name: jwt-claims-headers
             config: {}
 
-  - name: httpbin
-    url: https://httpbin.konghq.com
+  - name: redirector-service
+    url: http://redirector-service:8083
     routes:
-      - name: httpbin-route
-        paths:
-          - /httpbin
-        strip_path: true
-        plugins:
-          - name: jwt
-            config:
-              claims_to_verify:
-                - exp
-              key_claim_name: iss
-          - name: jwt-claims-headers
-            config: {}
+      - name: redirector-route
+        expression: http.path ~ "^/[^/]+$"
+        strip_path: false
+
+  # - name: httpbin
+  #   url: https://httpbin.konghq.com
+  #   routes:
+  #     - name: httpbin-route
+  #       paths:
+  #         - /httpbin
+  #       strip_path: true
+  #       plugins:
+  #         - name: jwt
+  #           config:
+  #             claims_to_verify:
+  #               - exp
+  #             key_claim_name: iss
+  #         - name: jwt-claims-headers
+  #           config: {}

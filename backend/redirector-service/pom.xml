@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.ganoninc.vite-url-shortener</groupId>
     <artifactId>redirector-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>redirector-service</name>
     <description>redirector-service</description>
     <url/>
