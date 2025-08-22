@@ -1,10 +1,12 @@
 package com.ganoninc.viteurlshortener.authservice.controllers;
 
 import com.ganoninc.viteurlshortener.authservice.config.AppProperties;
+import com.ganoninc.viteurlshortener.authservice.config.SecurityConfig;
 import com.ganoninc.viteurlshortener.authservice.utils.JwtUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -21,6 +23,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AuthController.class)
+@Import(SecurityConfig.class)
 public class AuthControllerTest {
 
     @Autowired
@@ -30,9 +33,8 @@ public class AuthControllerTest {
     @MockitoBean
     private AppProperties appProperties;
 
-
     @Test
-    void shouldReturnOauthCallbackViewWithModelAttributes() throws Exception {
+    public void itShouldReturnOauthCallbackViewWithModelAttributes() throws Exception {
         String email = "test@gmail.com";
         String token = "jwt-token";
         String frontendOrigin = "http://localhost:8080";
@@ -56,4 +58,10 @@ public class AuthControllerTest {
         verify(jwtUtils).generateToken(email);
         verify(appProperties).getFrontendOrigin();
     }
+
+    @Test
+    public void itShouldBlockAccessIfUserIsNotLoggedIn() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/oauth-callback"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrlPattern("http://localhost/oauth2/authorization/*"));    }
 }
