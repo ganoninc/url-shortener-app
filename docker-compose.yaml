@@ -120,7 +120,7 @@ services:
       - auth-service
       - url-service
       - redirector-service
-      # - analytics-service
+      - analytics-service
 
 volumes:
   pgdata:
