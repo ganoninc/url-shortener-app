@@ -20,9 +20,8 @@ public class UrlController {
     }
 
     @PostMapping("/shorten")
-    public ResponseEntity<?> shortenUrl(@RequestBody @Valid ShortenURLRequestDTO requestDTO, @RequestHeader("X-User-Sub") String userEmail) {
+    public ResponseEntity<Map<String,String>> shortenUrl(@RequestBody @Valid ShortenURLRequestDTO requestDTO, @RequestHeader("X-User-Sub") String userEmail) {
         String url = requestDTO.getOriginalUrl();
-
         UrlMapping urlMapping = urlService.createUrlMapping(url, userEmail);
         return ResponseEntity.ok(Map.of("shortId", urlMapping.getShortId()));
     }

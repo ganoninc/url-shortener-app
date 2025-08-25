@@ -20,7 +20,6 @@ public class UrlServiceImpl implements UrlService {
         this.urlCreatedProducer = producer;
     }
 
-
     @Override
     public UrlMapping createUrlMapping(String originalUrl, String userEmail) {
         String shortId = UUID.randomUUID().toString().substring(0, 8);

@@ -1,66 +1,112 @@
 package com.ganoninc.viteurlshortener.urlservice.controller;
 
-import com.ganoninc.viteurlshortener.urlservice.dto.ShortenURLRequestDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.ganoninc.viteurlshortener.urlservice.config.SecurityConfig;
 import com.ganoninc.viteurlshortener.urlservice.model.UrlMapping;
 import com.ganoninc.viteurlshortener.urlservice.service.UrlService;
+import com.ganoninc.viteurlshortener.urlservice.util.FakeUrlMapping;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest(UrlController.class)
+@Import({SecurityConfig.class})
 public class UrlControllerTest {
 
-    private final String testEmail = "test@test.com";
+    private final ObjectMapper objectMapper;
+    private final String userEmail = "user@test.com";
 
-    @Mock
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockitoBean
     private UrlService urlService;
 
-    @InjectMocks
-    private UrlController urlController;
-
-    @Test
-    void itShouldReturnShortIdWhenUrlIsShortened() {
-        String longUrl = "https://a-quite-long-url.com/that-could-be-shortened";
-        ShortenURLRequestDTO shortenURLRequestDTO = new ShortenURLRequestDTO();
-        shortenURLRequestDTO.setOriginalUrl(longUrl);
-
-        UrlMapping urlMapping = new UrlMapping();
-        urlMapping.setShortId("testId01");
-
-        when(urlService.createUrlMapping(longUrl, testEmail)).thenReturn(urlMapping);
-
-        ResponseEntity<?> response = urlController.shortenUrl(shortenURLRequestDTO, testEmail);
-
-        assertEquals(200, response.getStatusCode().value());
-        assertInstanceOf(Map.class, response.getBody());
-        assertEquals("testId01", ((Map) response.getBody()).get("shortId"));
+    public UrlControllerTest() {
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     @Test
-    void itShouldReturnUrlsWhenMyUrlsIsCalled() {
-        UrlMapping urlMapping1 = new UrlMapping();
-        urlMapping1.setShortId("testId01");
-        UrlMapping urlMapping2 = new UrlMapping();
-        urlMapping2.setShortId("testId02");
+    void itShouldReturnAShortIdWhenAUrlIsShortened() throws Exception {
+        UrlMapping urlMapping = FakeUrlMapping.builder().build();
+        Map<String, String> queryBody = Map.of("originalUrl", urlMapping.getOriginalUrl());
 
+        when(urlService.createUrlMapping(urlMapping.getOriginalUrl(), urlMapping.getUserEmail())).thenReturn(urlMapping);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/shorten")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(queryBody))
+                .header("X-User-Sub",urlMapping.getUserEmail()))
+                .andExpect(status().isOk())
+                .andExpect(content().string("{\"shortId\":\"" + urlMapping.getShortId() +"\"}"));
+
+        verify(urlService, times(1)).createUrlMapping(urlMapping.getOriginalUrl(), urlMapping.getUserEmail());
+    }
+
+    @Test
+    void itShouldNotCallCreateUrlMappingWhenAWrongUrlIsSubmited() throws Exception {
+        String aWrongUrl = "a-http:wrong//url.com";
+        Map<String, String> queryBody = Map.of("originalUrl", aWrongUrl);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/shorten")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(queryBody))
+                .header("X-User-Sub",userEmail))
+                .andExpect(status().isBadRequest());
+
+        verify(urlService, never()).createUrlMapping(any(), any());
+    }
+
+    @Test
+    void itShouldNotCallCreateUrlMappingWhenTheRequestBodyIsEmpty() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/shorten")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("")
+                .header("X-User-Sub",userEmail))
+                .andExpect(status().isBadRequest());
+
+        verify(urlService, never()).createUrlMapping(any(), any());
+    }
+
+    @Test
+    void itShouldReturnAListOfUrlsWhenMyUrlsIsCalled() throws Exception {
+        UrlMapping urlMapping1 = FakeUrlMapping.builder().build();
+        UrlMapping urlMapping2 = FakeUrlMapping.builder().build();
         List<UrlMapping> urlMappings = List.of(urlMapping1, urlMapping2);
 
-        when(urlService.getUserUrls(testEmail)).thenReturn(urlMappings);
+        when(urlService.getUserUrls(urlMapping1.getUserEmail())).thenReturn(urlMappings);
 
-        List<UrlMapping> response = urlController.getMyUrls(testEmail);
+        mockMvc.perform(MockMvcRequestBuilders.get("/my-urls")
+                .header("X-User-Sub", urlMapping1.getUserEmail()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(objectMapper.writeValueAsString(urlMappings)));
+    }
 
-        assertEquals(2, response.size());
-        assertEquals(response.get(0).getShortId(), urlMapping1.getShortId());
-        assertEquals(response.get(1).getShortId(), urlMapping2.getShortId());
+    @Test
+    void itShouldReturnAnEmptyListOfUrlsWhenMyUrlsIsCalledAndTheUserHasNoUrls() throws Exception {
+        List<UrlMapping> urlMappings = List.of();
 
+        when(urlService.getUserUrls(userEmail)).thenReturn(urlMappings);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/my-urls")
+                .header("X-User-Sub", userEmail))
+                .andExpect(status().isOk())
+                .andExpect(content().string(objectMapper.writeValueAsString(urlMappings)));
     }
 }

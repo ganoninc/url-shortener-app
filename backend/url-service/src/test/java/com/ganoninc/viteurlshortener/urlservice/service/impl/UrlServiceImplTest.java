@@ -26,7 +26,7 @@ class UrlServiceImplTest {
     @InjectMocks
     private UrlServiceImpl urlService;
 
-    private final String testEmail = "test@test.com";
+    private final String userEmail = "test@test.com";
     private final String originalUrl = "https://a-quite-long-url.com/that-could-be-shortened";
 
     @Test
@@ -37,18 +37,18 @@ class UrlServiceImplTest {
         saved.setId(1L);
         saved.setShortId("abc12345");
         saved.setOriginalUrl(originalUrl);
-        saved.setUserEmail(testEmail);
+        saved.setUserEmail(userEmail);
 
         when(urlRepository.save(any(UrlMapping.class))).thenReturn(saved);
 
-        UrlMapping result = urlService.createUrlMapping(originalUrl, testEmail);
+        UrlMapping result = urlService.createUrlMapping(originalUrl, userEmail);
 
         verify(urlRepository).save(captor.capture());
         verify(urlCreatedProducer).sendUrlCreated(saved);
 
         UrlMapping toSave = captor.getValue();
         assertEquals(originalUrl, toSave.getOriginalUrl());
-        assertEquals(testEmail, toSave.getUserEmail());
+        assertEquals(userEmail, toSave.getUserEmail());
         assertNotNull(toSave.getShortId());
         assertEquals(8, toSave.getShortId().length());
 
@@ -62,13 +62,13 @@ class UrlServiceImplTest {
         UrlMapping url2 = new UrlMapping();
         url2.setShortId("short2");
 
-        when(urlRepository.findAllByUserEmail(testEmail)).thenReturn(List.of(url1, url2));
+        when(urlRepository.findAllByUserEmail(userEmail)).thenReturn(List.of(url1, url2));
 
-        List<UrlMapping> result = urlService.getUserUrls(testEmail);
+        List<UrlMapping> result = urlService.getUserUrls(userEmail);
 
         assertEquals(2, result.size());
         assertEquals("short1", result.get(0).getShortId());
         assertEquals("short2", result.get(1).getShortId());
-        verify(urlRepository).findAllByUserEmail(testEmail);
+        verify(urlRepository).findAllByUserEmail(userEmail);
     }
 }

@@ -14,11 +14,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class UrlCreateProducerImplTest {
+    private final KafkaTemplate<String, String> mockKafkaTemplate;
+    private final UrlCreateProducerImpl urlCreateProducerImpl;
+
+    public UrlCreateProducerImplTest() {
+        mockKafkaTemplate = mock(KafkaTemplate.class);
+        urlCreateProducerImpl = new UrlCreateProducerImpl(mockKafkaTemplate);
+    }
+
     @Test
     void itShouldSendCorrectKafkaMessage() throws JsonProcessingException {
-        KafkaTemplate<String, String> kafkaTemplate = mock(KafkaTemplate.class);
-        UrlCreateProducerImpl urlCreateProducerImpl = new UrlCreateProducerImpl(kafkaTemplate);
-
         UrlMapping urlMapping = new UrlMapping();
         urlMapping.setOriginalUrl("https://a-quite-long-url.com/that-could-be-shortened");
         urlMapping.setShortId("testId01");
@@ -27,7 +32,7 @@ public class UrlCreateProducerImplTest {
         urlCreateProducerImpl.sendUrlCreated(urlMapping);
 
         ArgumentCaptor<String> payloadCaptor = ArgumentCaptor.forClass(String.class);
-        verify(kafkaTemplate).send(eq("url-created"), payloadCaptor.capture());
+        verify(mockKafkaTemplate).send(eq("url-created"), payloadCaptor.capture());
 
         String payload = payloadCaptor.getValue();
 
