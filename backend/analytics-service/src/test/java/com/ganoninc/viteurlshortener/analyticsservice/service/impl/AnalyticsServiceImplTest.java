@@ -2,12 +2,12 @@ package com.ganoninc.viteurlshortener.analyticsservice.service.impl;
 
 import com.ganoninc.viteurlshortener.analyticsservice.model.ClickEvent;
 import com.ganoninc.viteurlshortener.analyticsservice.repository.ClickRepository;
-import com.ganoninc.viteurlshortener.analyticsservice.service.AnalyticsService;
 import com.ganoninc.viteurlshortener.analyticsservice.util.FakeClickEvent;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +15,15 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest(classes = AnalyticsServiceImpl.class)
+@ExtendWith(MockitoExtension.class)
 public class AnalyticsServiceImplTest {
 
-    @Autowired
-    AnalyticsService analyticsService;
+    private final String wrongShortId = "wrongShortId";
 
-    @MockitoBean
+    @InjectMocks
+    AnalyticsServiceImpl analyticsServiceImpl;
+
+    @Mock
     private ClickRepository clickRepository;
 
     @Test
@@ -30,7 +32,8 @@ public class AnalyticsServiceImplTest {
         String shortId = listOfEvents.get(0).getShortId();
         when(clickRepository.findByShortId(shortId)).thenReturn(listOfEvents);
 
-        long clickCount = analyticsService.getClickCount(shortId);
+        long clickCount = analyticsServiceImpl.getClickCount(shortId);
+
         assertEquals(listOfEvents.size(), clickCount);
         verify(clickRepository, times(1)).findByShortId(shortId);
     }
@@ -41,29 +44,30 @@ public class AnalyticsServiceImplTest {
         String shortId = listOfEvents.get(0).getShortId();
         when(clickRepository.findByShortId(shortId)).thenReturn(listOfEvents);
 
-        List<ClickEvent> clickEvents = analyticsService.getAllEvents(shortId);
+        List<ClickEvent> clickEvents = analyticsServiceImpl.getAllEvents(shortId);
+
         assertEquals(listOfEvents.size(), clickEvents.size());
         verify(clickRepository, times(1)).findByShortId(shortId);
     }
 
     @Test
     public void itShouldReturnAClickCountOfZeroWhenItsCalledWithAWrongShortId(){
-        String wrongShortId = "wrongShortId";
         List<ClickEvent> listOfEvents = new ArrayList<>();
         when(clickRepository.findByShortId(wrongShortId)).thenReturn(listOfEvents);
 
-        long clickCount = analyticsService.getClickCount(wrongShortId);
+        long clickCount = analyticsServiceImpl.getClickCount(wrongShortId);
+
         verify(clickRepository, times(1)).findByShortId(wrongShortId);
         assertEquals(0, clickCount);
     }
 
     @Test
     public void itShouldReturnAnEmptyListWhenItsCalledWithAWrongShortId(){
-        String wrongShortId = "wrongShortId";
         List<ClickEvent> listOfEvents = new ArrayList<>();
         when(clickRepository.findByShortId(wrongShortId)).thenReturn(listOfEvents);
 
-        List<ClickEvent> clickEvents = analyticsService.getAllEvents(wrongShortId);
+        List<ClickEvent> clickEvents = analyticsServiceImpl.getAllEvents(wrongShortId);
+
         verify(clickRepository, times(1)).findByShortId(wrongShortId);
         assertEquals(0, clickEvents.size());
     }
