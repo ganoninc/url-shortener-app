@@ -1,24 +1,25 @@
 package com.ganoninc.viteurlshortener.redirectorservice.kafka;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class ClickEventProducerTest {
 
-    @Autowired
+    @InjectMocks
     private ClickEventProducer clickEventProducer;
 
-    @MockitoBean
+    @Mock
     private KafkaTemplate<String, String> kafkaTemplate;
 
     @Test

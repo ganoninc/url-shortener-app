@@ -1,7 +1,6 @@
 package com.ganoninc.viteurlshortener.redirectorservice.controller;
 
-import com.ganoninc.viteurlshortener.redirectorservice.kafka.ClickEventProducer;
-import com.ganoninc.viteurlshortener.redirectorservice.repository.UrlRepository;
+import com.ganoninc.viteurlshortener.redirectorservice.service.RedirectorService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,32 +9,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 public class RedirectController {
-    private final UrlRepository urlRepository;
-    private final ClickEventProducer clickEventProducer;
+    private final RedirectorService redirectorService;
 
-    public RedirectController(UrlRepository urlRepository, ClickEventProducer clickEventProducer) {
-        this.urlRepository = urlRepository;
-        this.clickEventProducer = clickEventProducer;
+    public RedirectController(RedirectorService redirectorService) {
+        this.redirectorService = redirectorService;
     }
-
 
     @GetMapping("/{shortId}")
     public ResponseEntity<Object> redirect(@PathVariable String shortId,
                                            HttpServletRequest request) {
-        return urlRepository.findByShortId(shortId)
-                .map(mapping -> {
-                    clickEventProducer.sendClickEvent(
-                        shortId,
-                        request.getRemoteAddr(),
-                        request.getHeader("User-Agent")
-                    );
-                    return ResponseEntity.status(HttpStatus.FOUND)
-                            .location(URI.create(mapping.getOriginalUrl()))
-                            .build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+        Optional<String> targetUrl = redirectorService.resolveRedirect(shortId, request.getRemoteAddr(), request.getHeader("User-Agent"));
+
+        return targetUrl.map(url -> ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(url))
+                .build()).orElse(ResponseEntity.notFound().build());
     }
 }
