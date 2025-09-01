@@ -7,13 +7,19 @@ import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import { useAppSelector } from "./hooks/hooks";
 import { selectJwt } from "./redux/authSlice";
+import LogoutPage from "./pages/LogoutPage/LogoutPage";
 
 function App() {
   const jwt = useAppSelector(selectJwt);
 
   const LoginPageImpl = () => (
     <Page>
-      <LoginPage></LoginPage>
+      <LoginPage />
+    </Page>
+  );
+  const LogoutPageImpl = () => (
+    <Page>
+      <LogoutPage />
     </Page>
   );
 
@@ -21,17 +27,17 @@ function App() {
     <Routes>
       <Route
         path="/login"
-        element={jwt ? <Navigate to="/new" /> : <LoginPageImpl />}
+        element={jwt ? <Navigate to="/" /> : <LoginPageImpl />}
       />
-      <Route path="/shorten" element={<>NEW URL</>} />
+      <Route path="/logout" element={<LogoutPageImpl />} />
       <Route path="/" element={<>NEW URL</>} />
-      <Route
-        path="/my-urls/:shortId"
-        element={jwt ? <>VIEW SHORTEN URL</> : <Navigate to="/login" />}
-      />
       <Route
         path="/my-urls/"
         element={jwt ? <>MY URLS</> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/my-urls/:shortId"
+        element={jwt ? <>VIEW SHORTEN URL</> : <Navigate to="/login" />}
       />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

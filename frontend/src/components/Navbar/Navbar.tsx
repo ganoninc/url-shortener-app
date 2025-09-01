@@ -10,7 +10,7 @@ export default function Navbar() {
     <div className="navbar">
       <span className="app-name">Vite URL Shortener</span>
       <nav>
-        <NavLink className="link" to="/shorten" end>
+        <NavLink className="link" to="/" end>
           Shorten an URL
         </NavLink>
         {isLoggedIn && (
@@ -21,6 +21,11 @@ export default function Navbar() {
         {!isLoggedIn && (
           <NavLink className="link" to="/login" end>
             Login
+          </NavLink>
+        )}
+        {isLoggedIn && (
+          <NavLink className="link" to="/logout" end>
+            Logout
           </NavLink>
         )}
       </nav>
