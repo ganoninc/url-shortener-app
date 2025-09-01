@@ -35,7 +35,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <Title label="Login" />
+      <Title content="Login" />
       <button onClick={handleLogin}>Login with Google</button>
     </>
   );
