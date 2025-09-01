@@ -1,0 +1,23 @@
+.navbar {
+  padding: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.app-name {
+  flex: 0 0 auto;
+}
+
+nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.link {
+  border-bottom: 2px solid transparent;
+}
+
+.link.active {
+  border-bottom-color: inherit;
+}

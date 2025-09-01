@@ -1,3 +1,5 @@
+import "./Layout.css";
+
 export type LayoutProps = {
   header: React.ReactElement;
   body: React.ReactElement;
@@ -7,9 +9,9 @@ export type LayoutProps = {
 export default function Layout({ header, body, footer }: LayoutProps) {
   return (
     <div className="layout">
-      <div className="header-container">{header}</div>
-      <div className="body-container">{body}</div>
-      <div className="footer-container">{footer}</div>
+      <header className="header-container">{header}</header>
+      <main className="body-container">{body}</main>
+      <footer className="footer-container">{footer}</footer>
     </div>
   );
 }

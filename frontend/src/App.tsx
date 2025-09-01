@@ -23,10 +23,10 @@ function App() {
         path="/login"
         element={jwt ? <Navigate to="/new" /> : <LoginPageImpl />}
       />
-      <Route path="/new" element={<>NEW URL</>} />
+      <Route path="/shorten" element={<>NEW URL</>} />
       <Route path="/" element={<>NEW URL</>} />
       <Route
-        path="/short/:shortId"
+        path="/my-urls/:shortId"
         element={jwt ? <>VIEW SHORTEN URL</> : <Navigate to="/login" />}
       />
       <Route

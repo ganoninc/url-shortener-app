@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import "./Page.css";
 
 export type PageProps = {
   children: ReactNode;
