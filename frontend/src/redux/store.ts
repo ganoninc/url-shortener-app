@@ -1,8 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice";
+import newShortUrlRecuder from "./newShortUrlSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  newShortUrl: newShortUrlRecuder,
 });
 
 export function setupStore(preloadedState?: Partial<RootState>) {

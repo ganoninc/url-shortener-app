@@ -8,7 +8,13 @@ describe("TextInput", () => {
     const testValue = "testValue";
     const changedTestValue = "changedTestValue";
 
-    render(<TextInput value={testValue} onChange={onChangeHandler} />);
+    render(
+      <TextInput
+        value={testValue}
+        onChange={onChangeHandler}
+        validationState="normal"
+      />
+    );
     const inputElt = screen.getByRole("textbox");
     fireEvent.change(inputElt, { target: { value: changedTestValue } });
 

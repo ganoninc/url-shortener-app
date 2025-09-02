@@ -1,10 +1,14 @@
 import type { ChangeEvent } from "react";
+import "./TextInput.css";
+
+export type TextInputState = "normal" | "valid" | "error";
 
 type TextInputProps = {
   value: string;
   placeholder?: string;
   onChange: (newValue: string) => void;
   isDisabled?: boolean;
+  validationState: TextInputState;
 };
 
 export default function TextInput({
@@ -12,6 +16,7 @@ export default function TextInput({
   placeholder = "",
   onChange,
   isDisabled = false,
+  validationState = "normal",
 }: TextInputProps) {
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     return onChange(e.target.value);
@@ -24,6 +29,14 @@ export default function TextInput({
       placeholder={placeholder}
       onChange={handleChange}
       disabled={isDisabled}
+      aria-invalid={validationState === "error"}
+      className={
+        validationState === "valid"
+          ? "is-valid"
+          : validationState === "error"
+          ? "has-error"
+          : ""
+      }
     />
   );
 }

@@ -8,6 +8,7 @@ import Footer from "./components/Footer/Footer";
 import { useAppSelector } from "./hooks/hooks";
 import { selectJwt } from "./redux/authSlice";
 import LogoutPage from "./pages/LogoutPage/LogoutPage";
+import NewShortUrlPage from "./pages/NewShortUrlPage/NewShortUrlPage";
 
 function App() {
   const jwt = useAppSelector(selectJwt);
@@ -22,6 +23,11 @@ function App() {
       <LogoutPage />
     </Page>
   );
+  const NewShortUrlPageImpl = () => (
+    <Page>
+      <NewShortUrlPage />
+    </Page>
+  );
 
   const LayoutBody = () => (
     <Routes>
@@ -30,7 +36,7 @@ function App() {
         element={jwt ? <Navigate to="/" /> : <LoginPageImpl />}
       />
       <Route path="/logout" element={<LogoutPageImpl />} />
-      <Route path="/" element={<>NEW URL</>} />
+      <Route path="/" element={<NewShortUrlPageImpl />} />
       <Route
         path="/my-urls/"
         element={jwt ? <>MY URLS</> : <Navigate to="/login" />}

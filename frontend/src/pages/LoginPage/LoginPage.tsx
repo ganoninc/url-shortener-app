@@ -1,6 +1,7 @@
 import { setCredentials } from "../../redux/authSlice";
 import Title from "../../components/Title/Title";
 import { useAppDispatch } from "../../hooks/hooks";
+import { Button } from "../../components/Button/Button";
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -36,7 +37,7 @@ export default function LoginPage() {
   return (
     <>
       <Title content="Login" />
-      <button onClick={handleLogin}>Login with Google</button>
+      <Button label="Login with Google" onClick={handleLogin} />
     </>
   );
 }
