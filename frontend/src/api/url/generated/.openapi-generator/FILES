@@ -1,0 +1,11 @@
+.gitignore
+.npmignore
+api.ts
+base.ts
+common.ts
+configuration.ts
+docs/ShortenURLRequestDTO.md
+docs/UrlControllerApi.md
+docs/UrlMapping.md
+git_push.sh
+index.ts

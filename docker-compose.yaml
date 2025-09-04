@@ -111,6 +111,7 @@ services:
       KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
       KONG_PLUGINS: bundled,jwt,jwt-claims-headers
       JWT_SECRET: ${JWT_SECRET}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
       KONG_LOG_LEVEL: debug
     volumes:
       - ./backend/api-gateway/kong.yml.template:/kong/declarative/kong.yml.template:ro

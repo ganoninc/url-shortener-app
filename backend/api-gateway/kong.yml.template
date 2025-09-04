@@ -27,6 +27,20 @@ services:
           - /url
         strip_path: true
         plugins:
+          - name: cors
+            config:
+              origins: ${CORS_ALLOWED_ORIGINS}
+              methods:
+                - GET
+                - POST
+                - OPTIONS
+              headers:
+                - authorization
+                - content-type
+              exposed_headers:
+                - authorization
+              credentials: true
+              max_age: 3600
           - name: jwt
             config:
               claims_to_verify:

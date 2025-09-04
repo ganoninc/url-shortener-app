@@ -10,6 +10,7 @@ import {
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { Button } from "../../components/Button/Button";
 import "./NewShortUrlPage.css";
+import { urlService } from "../../api/client";
 
 function isValidHttpUrl(str: string): boolean {
   try {
@@ -31,7 +32,21 @@ export default function NewShortUrlPage() {
     dispatch(updateOriginalUrl({ originalUrl: newLongUrl.trim() }));
   }
 
-  function handleURLShortenSubmit() {}
+  function handleURLShortenSubmit() {
+    urlService
+      .shortenUrl({
+        originalUrl,
+      })
+      .then((res) => {
+        console.log(res.data);
+        window.alert("Short URL created!");
+        dispatch(updateOriginalUrl({ originalUrl: "" }));
+      })
+      .catch((reason) => {
+        console.log(reason);
+        throw new Error(reason);
+      });
+  }
 
   return (
     <>
