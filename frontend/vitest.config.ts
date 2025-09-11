@@ -1,3 +1,4 @@
+import type {} from "vitest/config";
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
@@ -7,6 +8,16 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./jest.setup.ts"],
-    include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    projects: [
+      {
+        test: {
+          name: "unit",
+          include: ["**/*.test.{ts,tsx}"],
+          environment: "jsdom",
+          globals: true,
+          setupFiles: ["./jest.setup.ts"],
+        },
+      },
+    ],
   },
 });

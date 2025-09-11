@@ -1,10 +1,10 @@
-.has-error {
+.hasError {
   border: 1px solid red;
   background-color: rgb(255, 231, 231);
   color: red;
 }
 
-.is-valid {
+.isValid {
   border: 1px solid green;
   background-color: rgb(229, 249, 229);
   color: green;

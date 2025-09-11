@@ -4,6 +4,7 @@ import { renderWithProviders } from "../../utils/test-utils";
 import NewShortUrlPage from "./NewShortUrlPage";
 import { vi } from "vitest";
 import { updateOriginalUrl } from "../../redux/newShortUrlSlice";
+import TextInputStyles from "../../components/TextInput/TextInput.module.css";
 
 describe("NewShortUrlPage", () => {
   it("dispatches updateOriginalUrl action when original URL input has a new value", () => {
@@ -42,7 +43,7 @@ describe("NewShortUrlPage", () => {
     );
     const submitButton = screen.getByRole("button");
 
-    expect(originalUrlTextInput).toHaveClass("has-error");
+    expect(originalUrlTextInput).toHaveClass(TextInputStyles.hasError);
     expect(submitButton).toBeDisabled();
   });
 
@@ -59,7 +60,7 @@ describe("NewShortUrlPage", () => {
     );
     const submitButton = screen.getByRole("button");
 
-    expect(originalUrlTextInput).toHaveClass("is-valid");
+    expect(originalUrlTextInput).toHaveClass(TextInputStyles.isValid);
     expect(submitButton).toBeEnabled();
   });
 

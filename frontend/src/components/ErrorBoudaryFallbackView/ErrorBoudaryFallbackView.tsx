@@ -1,14 +1,16 @@
+import Page from "../Page/Page";
 import Title from "../Title/Title";
+import styles from "./ErrorBoundaryFallbackView.module.css";
 
 type ErrorBoudaryFallbackViewProps = {
   error: Error;
 };
 
-export function ErrorBoudaryFallbackView({
+export default function ErrorBoudaryFallbackView({
   error,
 }: ErrorBoudaryFallbackViewProps) {
   return (
-    <>
+    <Page>
       <Title content="Something went wrong." level="2" />
       <div role="alert">
         <p>
@@ -23,8 +25,10 @@ export function ErrorBoudaryFallbackView({
           </a>
           .
         </p>
-        <pre style={{ color: "red" }}>Error message: "{error.message}"</pre>
+        <pre className={styles.errorMessage}>
+          Error message: "{error.message}"
+        </pre>
       </div>
-    </>
+    </Page>
   );
 }

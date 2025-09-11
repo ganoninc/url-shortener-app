@@ -8,6 +8,7 @@ A scalable URL shortener app with real-time click analytics built using:
 - 🔐 JWT + Google OAuth2 SSO
 - 🔎 Swagger for API docs
 - ⚛️ React + Redux frontend
+- 📚 Storybook for UI component development
 - 🛡️ Kong as API gateway (JWT validation)
 
 ---

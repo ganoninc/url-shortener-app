@@ -4,7 +4,11 @@ type ButtonProps = {
   isDisabled?: boolean;
 };
 
-export function Button({ label, onClick, isDisabled = false }: ButtonProps) {
+export default function Button({
+  label,
+  onClick,
+  isDisabled = false,
+}: ButtonProps) {
   function handleClick() {
     onClick();
   }

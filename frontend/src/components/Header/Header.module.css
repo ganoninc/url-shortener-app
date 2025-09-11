@@ -5,8 +5,9 @@
   justify-content: space-between;
 }
 
-.app-name {
+.appName {
   flex: 0 0 auto;
+  font-weight: bold;
 }
 
 nav {

@@ -8,9 +8,19 @@ import {
   updateOriginalUrl,
 } from "../../redux/newShortUrlSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { Button } from "../../components/Button/Button";
-import "./NewShortUrlPage.css";
+import Button from "../../components/Button/Button";
+import styles from "./NewShortUrlPage.module.css";
 import { urlService } from "../../api/client";
+import { useState } from "react";
+import loadingSvg from "../../assets/loading.svg";
+import Page from "../../components/Page/Page";
+
+type NewShortUrlPageState =
+  | {
+      status: "initial";
+    }
+  | { status: "loading" }
+  | { status: "error"; error: string };
 
 function isValidHttpUrl(str: string): boolean {
   try {
@@ -24,49 +34,73 @@ function isValidHttpUrl(str: string): boolean {
 export default function NewShortUrlPage() {
   const originalUrl = useAppSelector(selectOriginalUrl);
   const dispatch = useAppDispatch();
+  const [pageState, setPageState] = useState<NewShortUrlPageState>({
+    status: "initial",
+  });
+
   const isOriginalUrlValid = isValidHttpUrl(originalUrl);
-  const validationState: TextInputState =
+  const UrlInputState: TextInputState =
     originalUrl === "" ? "normal" : isOriginalUrlValid ? "valid" : "error";
 
-  function handleOriginalUrlChange(newLongUrl: string) {
-    dispatch(updateOriginalUrl({ originalUrl: newLongUrl.trim() }));
+  function handleUrlInputChange(url: string) {
+    dispatch(updateOriginalUrl({ originalUrl: url.trim() }));
   }
 
-  function handleURLShortenSubmit() {
+  function handleUrlSubmit() {
+    setPageState({ status: "loading" });
     urlService
       .shortenUrl({
         originalUrl,
       })
-      .then((res) => {
-        console.log(res.data);
+      .then(() => {
         window.alert("Short URL created!");
+        setPageState({ status: "initial" });
         dispatch(updateOriginalUrl({ originalUrl: "" }));
       })
       .catch((reason) => {
-        console.log(reason);
-        throw new Error(reason);
+        const message =
+          reason instanceof Error
+            ? reason.message
+            : typeof reason === "string"
+            ? reason
+            : JSON.stringify(reason);
+        setPageState({ status: "error", error: message });
       });
   }
 
   return (
-    <>
+    <Page>
       <Title content="Shorten an URL"></Title>
       <Text content="Make your links shorter and get a QR code in one click."></Text>
-      <div className="original-url-input-container">
+      <div className={styles.originalUrlInputContainer}>
         <TextInput
           value={originalUrl}
-          onChange={handleOriginalUrlChange}
+          onChange={handleUrlInputChange}
           placeholder="Enter your link here"
-          validationState={validationState}
+          validationState={UrlInputState}
+          isDisabled={pageState.status === "loading"}
         />
       </div>
-      <div>
+      <div className={styles.submitBtnContainer}>
         <Button
           label="Shorten URL"
-          onClick={handleURLShortenSubmit}
-          isDisabled={!isOriginalUrlValid}
+          onClick={handleUrlSubmit}
+          isDisabled={pageState.status === "loading" || !isOriginalUrlValid}
         ></Button>
       </div>
-    </>
+
+      {pageState.status === "error" && (
+        <div className={styles.errorContainer}>
+          <p>Something went wrong: "{pageState.error}".</p>
+          <p>Please try again later.</p>
+        </div>
+      )}
+
+      {pageState.status === "loading" && (
+        <div>
+          <img src={loadingSvg} alt="Loading..." width={64} height={64} />
+        </div>
+      )}
+    </Page>
   );
 }

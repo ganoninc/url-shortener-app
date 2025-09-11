@@ -1,0 +1,11 @@
+.originalUrlInputContainer {
+  margin-bottom: 1rem;
+}
+
+.submitBtnContainer {
+  margin-bottom: 1rem;
+}
+
+.errorContainer {
+  color: red;
+}

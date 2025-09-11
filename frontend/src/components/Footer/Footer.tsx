@@ -1,8 +1,8 @@
-import "./Footer.css";
+import styles from "./Footer.module.css";
 
 export default function Footer() {
   return (
-    <div className="footer">
+    <div className={styles.footer}>
       © {new Date().getFullYear()} Romain Giovanetti —{" "}
       <a
         href="https://github.com/ganoninc/url-shortener-app"

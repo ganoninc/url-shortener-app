@@ -5,7 +5,7 @@ import "./index.css";
 import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
-import { ErrorBoudaryFallbackView } from "./components/ErrorBoudaryFallbackView/ErrorBoudaryFallbackView.tsx";
+import ErrorBoudaryFallbackView from "./components/ErrorBoudaryFallbackView/ErrorBoudaryFallbackView.tsx";
 import { store } from "./redux/store.ts";
 
 createRoot(document.getElementById("root")!).render(

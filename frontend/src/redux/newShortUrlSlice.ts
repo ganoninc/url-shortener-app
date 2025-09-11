@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "@reduxjs/toolkit/query";
+import type { RootState } from "./store";
 
 export type NewShortUrlState = {
   originalUrl: string;

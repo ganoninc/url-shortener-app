@@ -1,5 +1,5 @@
 import type { ChangeEvent } from "react";
-import "./TextInput.css";
+import styles from "./TextInput.module.css";
 
 export type TextInputState = "normal" | "valid" | "error";
 
@@ -32,9 +32,9 @@ export default function TextInput({
       aria-invalid={validationState === "error"}
       className={
         validationState === "valid"
-          ? "is-valid"
+          ? styles.isValid
           : validationState === "error"
-          ? "has-error"
+          ? styles.hasError
           : ""
       }
     />

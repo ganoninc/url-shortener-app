@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
-import "./Page.css";
+import styles from "./Page.module.css";
 
 export type PageProps = {
   children: ReactNode;
 };
 
 export default function Page({ children }: PageProps) {
-  return <div className="page">{children}</div>;
+  return <div className={styles.page}>{children}</div>;
 }
