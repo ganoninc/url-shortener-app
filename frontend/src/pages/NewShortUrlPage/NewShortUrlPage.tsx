@@ -14,6 +14,8 @@ import { urlService } from "../../api/client";
 import { useState } from "react";
 import loadingSvg from "../../assets/loading.svg";
 import Page from "../../components/Page/Page";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../routePaths";
 
 type NewShortUrlPageState =
   | {
@@ -22,7 +24,7 @@ type NewShortUrlPageState =
   | { status: "loading" }
   | { status: "error"; error: string };
 
-function isValidHttpUrl(str: string): boolean {
+function isValidHttpUrl(str: string) {
   try {
     const url = new URL(str);
     return url.protocol === "http:" || url.protocol === "https:";
@@ -37,6 +39,7 @@ export default function NewShortUrlPage() {
   const [pageState, setPageState] = useState<NewShortUrlPageState>({
     status: "initial",
   });
+  const navigate = useNavigate();
 
   const isOriginalUrlValid = isValidHttpUrl(originalUrl);
   const UrlInputState: TextInputState =
@@ -52,10 +55,11 @@ export default function NewShortUrlPage() {
       .shortenUrl({
         originalUrl,
       })
-      .then(() => {
+      .then((res) => {
         window.alert("Short URL created!");
         setPageState({ status: "initial" });
         dispatch(updateOriginalUrl({ originalUrl: "" }));
+        navigate(ROUTES.myUrlDetail(res.data.shortId));
       })
       .catch((reason) => {
         const message =

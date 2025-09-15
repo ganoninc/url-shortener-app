@@ -1,9 +1,9 @@
 import styles from "./Layout.module.css";
 
 export type LayoutProps = {
-  header: React.ReactElement;
-  body: React.ReactElement;
-  footer: React.ReactElement;
+  header: React.ReactNode;
+  body: React.ReactNode;
+  footer: React.ReactNode;
 };
 
 export default function Layout({ header, body, footer }: LayoutProps) {
