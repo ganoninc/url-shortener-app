@@ -9,22 +9,23 @@ vi.stubEnv("VITE_API_GATEWAY_URL", "http://localhost");
 
 const API_GATEWAY_URL = import.meta.env.VITE_API_GATEWAY_URL;
 
-vi.mock("../../api/client");
-
 const jwtToken = "fake-jwt-token";
 const userEmail = "user@test.com";
 
 describe("LoginPage", () => {
   beforeAll(() => {
+    console.log(window);
     Object.defineProperty(window, "open", {
       writable: true,
       value: vi.fn(),
     });
-  });
 
-  beforeEach(() => {
     vi.spyOn(window, "addEventListener");
     vi.spyOn(window, "removeEventListener");
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it("matches the login page snapshot", () => {
@@ -67,6 +68,7 @@ describe("LoginPage", () => {
     expect(store.dispatch).toHaveBeenCalledTimes(1);
     expect(store.dispatch).toHaveBeenCalledWith(
       setCredentials({
+        status: "authenticated",
         jwt: jwtToken,
         user: { email: userEmail },
       })

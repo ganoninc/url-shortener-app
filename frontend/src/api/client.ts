@@ -14,10 +14,9 @@ const createClient = (store: Store<RootState>) => {
   });
 
   client.interceptors.request.use((config) => {
-    const jwt = store.getState().auth.jwt;
-    console.log(jwt);
-    if (jwt) {
-      config.headers.Authorization = `Bearer ${jwt}`;
+    const authState = store.getState().auth;
+    if (authState.status === "authenticated") {
+      config.headers.Authorization = `Bearer ${authState.jwt}`;
     }
 
     return config;

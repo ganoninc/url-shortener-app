@@ -22,6 +22,7 @@ export default function LoginPage() {
       if (token && email) {
         dispatch(
           setCredentials({
+            status: "authenticated",
             jwt: token,
             user: { email },
           })

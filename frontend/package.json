@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "storybook": "storybook dev -p 6006 --disable-telemetry",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "gen:url-service": "openapi-generator-cli generate -g typescript-axios -o src/api/url/generated -i http://localhost:8082/v3/api-docs --additional-properties=supportsES6=true,skipFormModel=false"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
@@ -49,6 +50,7 @@
     "jest-environment-jsdom": "^30.0.5",
     "jest-transformer-svg": "^2.1.0",
     "jsdom": "^26.1.0",
+    "msw": "^2.11.2",
     "playwright": "^1.55.0",
     "redux-mock-store": "^1.5.5",
     "storybook": "^9.1.4",

@@ -1,8 +1,10 @@
 import { describe, vi } from "vitest";
 import { setupStore, type AppStore } from "../../redux/store";
-import { logout, setCredentials } from "../../redux/authSlice";
+import { logout } from "../../redux/authSlice";
 import { renderWithProviders } from "../../utils/test-utils";
 import LogoutPage from "./LogoutPage";
+import { fakeAuthenticatedAuthState } from "../../redux/fakes";
+import { ROUTES } from "../../routePaths";
 
 const mockNavigate = vi.fn();
 
@@ -18,28 +20,20 @@ describe("LogoutPage", () => {
   let store: AppStore;
 
   beforeEach(() => {
-    store = setupStore();
-    store.dispatch(
-      setCredentials({
-        jwt: "naknsandoasndanso",
-        user: { email: "sadsadadas" },
-      })
-    );
+    store = setupStore({
+      auth: fakeAuthenticatedAuthState,
+    });
     vi.spyOn(store, "dispatch");
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   it("dispatches a logout action on mount", () => {
-    const store = setupStore();
-    store.dispatch(
-      setCredentials({
-        jwt: "naknsandoasndanso",
-        user: { email: "sadsadadas" },
-      })
-    );
+    const store = setupStore({
+      auth: fakeAuthenticatedAuthState,
+    });
     vi.spyOn(store, "dispatch");
 
     renderWithProviders(<LogoutPage />, { store });
@@ -48,9 +42,9 @@ describe("LogoutPage", () => {
     expect(store.dispatch).toHaveBeenCalledWith(logout());
   });
 
-  it("redirects to / on mount", () => {
+  it("redirects to ROUTES.home on mount", () => {
     renderWithProviders(<LogoutPage />, { store });
     expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith("/");
+    expect(mockNavigate).toHaveBeenCalledWith(ROUTES.home);
   });
 });

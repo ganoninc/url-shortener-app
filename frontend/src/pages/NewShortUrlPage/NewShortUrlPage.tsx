@@ -56,7 +56,6 @@ export default function NewShortUrlPage() {
         originalUrl,
       })
       .then((res) => {
-        window.alert("Short URL created!");
         setPageState({ status: "initial" });
         dispatch(updateOriginalUrl({ originalUrl: "" }));
         navigate(ROUTES.myUrlDetail(res.data.shortId));

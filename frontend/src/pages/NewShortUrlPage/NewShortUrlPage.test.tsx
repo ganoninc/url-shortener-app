@@ -1,4 +1,4 @@
-import { fireEvent, screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { setupStore } from "../../redux/store";
 import { renderWithProviders } from "../../utils/test-utils";
 import NewShortUrlPage from "./NewShortUrlPage";
@@ -6,12 +6,35 @@ import { vi } from "vitest";
 import { updateOriginalUrl } from "../../redux/newShortUrlSlice";
 import TextInputStyles from "../../components/TextInput/TextInput.module.css";
 
+import { beforeAll, afterEach, afterAll } from "vitest";
+import { server } from "../../mocks/node";
+import { ROUTES } from "../../routePaths";
+import { fakeShortenURLResponse } from "../../mocks/fakes";
+import { fakeAuthenticatedAuthState } from "../../redux/fakes";
+
+const mockedUseNavigate = vi.fn();
+vi.mock("react-router-dom", async () => {
+  const actual = vi.importActual("react-router-dom");
+  return {
+    ...actual,
+    useNavigate: () => mockedUseNavigate,
+  };
+});
+
 describe("NewShortUrlPage", () => {
+  beforeAll(() => server.listen());
+  afterEach(() => {
+    server.resetHandlers();
+    vi.clearAllMocks();
+  });
+  afterAll(() => server.close());
+
   it("dispatches updateOriginalUrl action when original URL input has a new value", () => {
     const store = setupStore({
       newShortUrl: {
         originalUrl: "http",
       },
+      auth: fakeAuthenticatedAuthState,
     });
     vi.spyOn(store, "dispatch");
     const updatedOriginalUrl = "http:";
@@ -35,9 +58,10 @@ describe("NewShortUrlPage", () => {
       newShortUrl: {
         originalUrl: "a-wrong-url",
       },
+      auth: fakeAuthenticatedAuthState,
     });
-
     renderWithProviders(<NewShortUrlPage />, { store });
+
     const originalUrlTextInput = screen.getByPlaceholderText(
       "Enter your link here"
     );
@@ -52,9 +76,10 @@ describe("NewShortUrlPage", () => {
       newShortUrl: {
         originalUrl: "http://localhost",
       },
+      auth: fakeAuthenticatedAuthState,
     });
-
     renderWithProviders(<NewShortUrlPage />, { store });
+
     const originalUrlTextInput = screen.getByPlaceholderText(
       "Enter your link here"
     );
@@ -64,16 +89,46 @@ describe("NewShortUrlPage", () => {
     expect(submitButton).toBeEnabled();
   });
 
-  it("disables submit button when originalUrl is empty", () => {
+  it("disables submit button and gives no visual feedback when originalUrl is empty", () => {
     const store = setupStore({
       newShortUrl: {
         originalUrl: "",
       },
+      auth: fakeAuthenticatedAuthState,
     });
-
     renderWithProviders(<NewShortUrlPage />, { store });
+
+    const originalUrlTextInput = screen.getByPlaceholderText(
+      "Enter your link here"
+    );
     const submitButton = screen.getByRole("button");
 
+    expect(originalUrlTextInput).not.toHaveClass();
     expect(submitButton).toBeDisabled();
+  });
+
+  it("resets the store when it gets a successful answer from the url-service and redirects to ROUTES.myUrlDetail()", async () => {
+    const store = setupStore({
+      newShortUrl: {
+        originalUrl: "http://localhost",
+      },
+      auth: fakeAuthenticatedAuthState,
+    });
+    vi.spyOn(store, "dispatch");
+    renderWithProviders(<NewShortUrlPage />, { store });
+
+    const submitButton = screen.getByRole("button");
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(store.dispatch).toHaveBeenCalledTimes(1);
+      expect(store.dispatch).toHaveBeenCalledWith(
+        updateOriginalUrl({ originalUrl: "" })
+      );
+      expect(mockedUseNavigate).toHaveBeenCalledTimes(1);
+      expect(mockedUseNavigate).toHaveBeenCalledWith(
+        ROUTES.myUrlDetail(fakeShortenURLResponse.shortId)
+      );
+    });
   });
 });
