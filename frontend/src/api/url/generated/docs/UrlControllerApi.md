@@ -4,12 +4,13 @@ All URIs are relative to *http://localhost:8082*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
-|[**getMyUrls**](#getmyurls) | **GET** /my-urls | |
-|[**shortenUrl**](#shortenurl) | **POST** /shorten | |
+|[**getUserUrls**](#getuserurls) | **GET** /my-urls | Get user\&#39;s URLs|
+|[**shortenUrl**](#shortenurl) | **POST** /shorten | Shorten a URL|
 
-# **getMyUrls**
-> Array<UrlMapping> getMyUrls()
+# **getUserUrls**
+> Array<UserUrlDTO> getUserUrls()
 
+Returns the list of shortened URL created by the user
 
 ### Example
 
@@ -22,7 +23,7 @@ import {
 const configuration = new Configuration();
 const apiInstance = new UrlControllerApi(configuration);
 
-const { status, data } = await apiInstance.getMyUrls();
+const { status, data } = await apiInstance.getUserUrls();
 ```
 
 ### Parameters
@@ -31,7 +32,7 @@ This endpoint does not have any parameters.
 
 ### Return type
 
-**Array<UrlMapping>**
+**Array<UserUrlDTO>**
 
 ### Authorization
 
@@ -40,19 +41,21 @@ This endpoint does not have any parameters.
 ### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: */*
+ - **Accept**: application/json, */*
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**200** | OK |  -  |
+|**200** | List of user\&#39;s URL |  -  |
+|**400** | User not logged in |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **shortenUrl**
-> { [key: string]: string; } shortenUrl(shortenURLRequestDTO)
+> ShortenURLResponseDTO shortenUrl(shortenURLRequestDTO)
 
+Creates a shortened URL for the provided original URL
 
 ### Example
 
@@ -82,7 +85,7 @@ const { status, data } = await apiInstance.shortenUrl(
 
 ### Return type
 
-**{ [key: string]: string; }**
+**ShortenURLResponseDTO**
 
 ### Authorization
 
@@ -91,13 +94,14 @@ const { status, data } = await apiInstance.shortenUrl(
 ### HTTP request headers
 
  - **Content-Type**: application/json
- - **Accept**: */*
+ - **Accept**: application/json, */*
 
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-|**200** | OK |  -  |
+|**200** | Successfully created short URL |  -  |
+|**400** | User not logged in |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

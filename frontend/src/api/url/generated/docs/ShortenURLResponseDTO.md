@@ -1,20 +1,20 @@
-# ShortenURLRequestDTO
+# ShortenURLResponseDTO
 
-Request containing the original URL to be shortened
+Response containing the shortened URL ID
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**originalUrl** | **string** | Long URL to shorten | [default to undefined]
+**shortId** | **string** | The shortened identifier for the URL | [optional] [default to undefined]
 
 ## Example
 
 ```typescript
-import { ShortenURLRequestDTO } from './api';
+import { ShortenURLResponseDTO } from './api';
 
-const instance: ShortenURLRequestDTO = {
-    originalUrl,
+const instance: ShortenURLResponseDTO = {
+    shortId,
 };
 ```
 

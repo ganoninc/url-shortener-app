@@ -24,7 +24,7 @@ import type { RequestArgs } from './base';
 import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerMap } from './base';
 
 /**
- * 
+ * Request containing the original URL to be shortened
  * @export
  * @interface ShortenURLRequestDTO
  */
@@ -37,39 +37,40 @@ export interface ShortenURLRequestDTO {
     'originalUrl': string;
 }
 /**
- * 
+ * Response containing the shortened URL ID
  * @export
- * @interface UrlMapping
+ * @interface ShortenURLResponseDTO
  */
-export interface UrlMapping {
+export interface ShortenURLResponseDTO {
     /**
-     * 
-     * @type {number}
-     * @memberof UrlMapping
-     */
-    'id'?: number;
-    /**
-     * 
+     * The shortened identifier for the URL
      * @type {string}
-     * @memberof UrlMapping
+     * @memberof ShortenURLResponseDTO
      */
-    'originalUrl'?: string;
+    'shortId'?: string;
+}
+/**
+ * Response containing the shortened URL id, the original URL, and its creation date
+ * @export
+ * @interface UserUrlDTO
+ */
+export interface UserUrlDTO {
     /**
-     * 
+     * The shortened identifier of the URL
      * @type {string}
-     * @memberof UrlMapping
+     * @memberof UserUrlDTO
      */
     'shortId'?: string;
     /**
-     * 
+     * The original URL
      * @type {string}
-     * @memberof UrlMapping
+     * @memberof UserUrlDTO
      */
-    'userEmail'?: string;
+    'originalUrl'?: string;
     /**
-     * 
+     * The creation date
      * @type {string}
-     * @memberof UrlMapping
+     * @memberof UserUrlDTO
      */
     'createdAt'?: string;
 }
@@ -81,11 +82,12 @@ export interface UrlMapping {
 export const UrlControllerApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * 
+         * Returns the list of shortened URL created by the user
+         * @summary Get user\'s URLs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMyUrls: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getUserUrls: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/my-urls`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -114,7 +116,8 @@ export const UrlControllerApiAxiosParamCreator = function (configuration?: Confi
             };
         },
         /**
-         * 
+         * Creates a shortened URL for the provided original URL
+         * @summary Shorten a URL
          * @param {ShortenURLRequestDTO} shortenURLRequestDTO 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -163,23 +166,25 @@ export const UrlControllerApiFp = function(configuration?: Configuration) {
     const localVarAxiosParamCreator = UrlControllerApiAxiosParamCreator(configuration)
     return {
         /**
-         * 
+         * Returns the list of shortened URL created by the user
+         * @summary Get user\'s URLs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getMyUrls(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UrlMapping>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getMyUrls(options);
+        async getUserUrls(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<UserUrlDTO>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getUserUrls(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UrlControllerApi.getMyUrls']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['UrlControllerApi.getUserUrls']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
-         * 
+         * Creates a shortened URL for the provided original URL
+         * @summary Shorten a URL
          * @param {ShortenURLRequestDTO} shortenURLRequestDTO 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async shortenUrl(shortenURLRequestDTO: ShortenURLRequestDTO, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: string; }>> {
+        async shortenUrl(shortenURLRequestDTO: ShortenURLRequestDTO, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShortenURLResponseDTO>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.shortenUrl(shortenURLRequestDTO, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['UrlControllerApi.shortenUrl']?.[localVarOperationServerIndex]?.url;
@@ -196,20 +201,22 @@ export const UrlControllerApiFactory = function (configuration?: Configuration, 
     const localVarFp = UrlControllerApiFp(configuration)
     return {
         /**
-         * 
+         * Returns the list of shortened URL created by the user
+         * @summary Get user\'s URLs
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getMyUrls(options?: RawAxiosRequestConfig): AxiosPromise<Array<UrlMapping>> {
-            return localVarFp.getMyUrls(options).then((request) => request(axios, basePath));
+        getUserUrls(options?: RawAxiosRequestConfig): AxiosPromise<Array<UserUrlDTO>> {
+            return localVarFp.getUserUrls(options).then((request) => request(axios, basePath));
         },
         /**
-         * 
+         * Creates a shortened URL for the provided original URL
+         * @summary Shorten a URL
          * @param {ShortenURLRequestDTO} shortenURLRequestDTO 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        shortenUrl(shortenURLRequestDTO: ShortenURLRequestDTO, options?: RawAxiosRequestConfig): AxiosPromise<{ [key: string]: string; }> {
+        shortenUrl(shortenURLRequestDTO: ShortenURLRequestDTO, options?: RawAxiosRequestConfig): AxiosPromise<ShortenURLResponseDTO> {
             return localVarFp.shortenUrl(shortenURLRequestDTO, options).then((request) => request(axios, basePath));
         },
     };
@@ -223,17 +230,19 @@ export const UrlControllerApiFactory = function (configuration?: Configuration, 
  */
 export class UrlControllerApi extends BaseAPI {
     /**
-     * 
+     * Returns the list of shortened URL created by the user
+     * @summary Get user\'s URLs
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UrlControllerApi
      */
-    public getMyUrls(options?: RawAxiosRequestConfig) {
-        return UrlControllerApiFp(this.configuration).getMyUrls(options).then((request) => request(this.axios, this.basePath));
+    public getUserUrls(options?: RawAxiosRequestConfig) {
+        return UrlControllerApiFp(this.configuration).getUserUrls(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
-     * 
+     * Creates a shortened URL for the provided original URL
+     * @summary Shorten a URL
      * @param {ShortenURLRequestDTO} shortenURLRequestDTO 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
