@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ganoninc.viteurlshortener.urlservice.config.SecurityConfig;
+import com.ganoninc.viteurlshortener.urlservice.dto.UserUrlDTO;
 import com.ganoninc.viteurlshortener.urlservice.model.UrlMapping;
 import com.ganoninc.viteurlshortener.urlservice.service.UrlService;
 import com.ganoninc.viteurlshortener.urlservice.util.FakeUrlMapping;
@@ -89,13 +90,17 @@ public class UrlControllerTest {
         UrlMapping urlMapping1 = FakeUrlMapping.builder().build();
         UrlMapping urlMapping2 = FakeUrlMapping.builder().build();
         List<UrlMapping> urlMappings = List.of(urlMapping1, urlMapping2);
+        List<UserUrlDTO> urlDtos = urlMappings
+                .stream()
+                .map(UserUrlDTO::from)
+                .toList();
 
         when(urlService.getUserUrls(urlMapping1.getUserEmail())).thenReturn(urlMappings);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/my-urls")
                 .header("X-User-Sub", urlMapping1.getUserEmail()))
                 .andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(urlMappings)));
+                .andExpect(content().string(objectMapper.writeValueAsString(urlDtos)));
     }
 
     @Test
