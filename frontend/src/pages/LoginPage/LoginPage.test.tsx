@@ -14,7 +14,6 @@ const userEmail = "user@test.com";
 
 describe("LoginPage", () => {
   beforeAll(() => {
-    console.log(window);
     Object.defineProperty(window, "open", {
       writable: true,
       value: vi.fn(),
@@ -25,7 +24,7 @@ describe("LoginPage", () => {
   });
 
   afterEach(() => {
-    vi.resetAllMocks();
+    vi.clearAllMocks();
   });
 
   it("matches the login page snapshot", () => {

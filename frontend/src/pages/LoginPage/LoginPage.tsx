@@ -3,6 +3,8 @@ import Title from "../../components/Title/Title";
 import { useAppDispatch } from "../../hooks/hooks";
 import Button from "../../components/Button/Button";
 import Page from "../../components/Page/Page";
+import { fakeAuthenticatedAuthState } from "../../redux/fakes";
+import { isMSWEnabled } from "../../config/msw";
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -36,10 +38,28 @@ export default function LoginPage() {
     window.addEventListener("message", receiveMessage);
   }
 
+  function handleMockedServicesLogin() {
+    dispatch(setCredentials(fakeAuthenticatedAuthState));
+  }
+
   return (
     <Page>
       <Title content="Login" />
-      <Button label="Login with Google" onClick={handleLogin} />
+      <Button
+        label="Login with Google"
+        onClick={handleLogin}
+        isDisabled={isMSWEnabled}
+      />
+      {isMSWEnabled && (
+        <>
+          <br />
+          <br />
+          <Button
+            label="Mocked Services Login"
+            onClick={handleMockedServicesLogin}
+          />
+        </>
+      )}
     </Page>
   );
 }

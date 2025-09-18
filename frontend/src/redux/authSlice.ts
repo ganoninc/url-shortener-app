@@ -51,4 +51,8 @@ export const selectJwt = (state: RootState) => {
 
   return null;
 };
+export const selectStatus = (state: RootState) => {
+  return state.auth.status;
+};
+
 export default authSlice.reducer;

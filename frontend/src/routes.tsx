@@ -5,10 +5,10 @@ import LogoutPage from "./pages/LogoutPage/LogoutPage";
 import NewShortUrlPage from "./pages/NewShortUrlPage/NewShortUrlPage";
 import { ROUTES } from "./routePaths";
 
-export const routes = (jwt: string | null) => [
+export const routes = (isLoggedIn: boolean | null) => [
   {
     path: ROUTES.login,
-    element: jwt ? <Navigate to={ROUTES.home} /> : <LoginPage />,
+    element: isLoggedIn ? <Navigate to={ROUTES.home} /> : <LoginPage />,
   },
   {
     path: ROUTES.logout,
@@ -20,11 +20,15 @@ export const routes = (jwt: string | null) => [
   },
   {
     path: ROUTES.myUrls,
-    element: jwt ? <>MY URLS</> : <Navigate to={ROUTES.login} />,
+    element: isLoggedIn ? <>MY URLS</> : <Navigate to={ROUTES.login} />,
   },
   {
     path: ROUTES.myUrlDetail(),
-    element: jwt ? <>VIEW SHORTEN URL</> : <Navigate to={ROUTES.login} />,
+    element: isLoggedIn ? (
+      <>VIEW SHORTEN URL</>
+    ) : (
+      <Navigate to={ROUTES.login} />
+    ),
   },
   {
     path: "*",

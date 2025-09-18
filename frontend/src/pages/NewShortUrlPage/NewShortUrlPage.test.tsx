@@ -11,6 +11,7 @@ import { server } from "../../mocks/node";
 import { ROUTES } from "../../routePaths";
 import { fakeShortenURLResponse } from "../../mocks/fakes";
 import { fakeAuthenticatedAuthState } from "../../redux/fakes";
+import { urlService } from "../../api/client";
 
 const mockedUseNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
@@ -19,6 +20,10 @@ vi.mock("react-router-dom", async () => {
     ...actual,
     useNavigate: () => mockedUseNavigate,
   };
+});
+
+Object.defineProperty(window, "alert", {
+  value: vi.fn(),
 });
 
 describe("NewShortUrlPage", () => {
@@ -105,6 +110,45 @@ describe("NewShortUrlPage", () => {
 
     expect(originalUrlTextInput).not.toHaveClass();
     expect(submitButton).toBeDisabled();
+  });
+
+  it("call urlService.shortenUrl() when handling url submit.", async () => {
+    const store = setupStore({
+      newShortUrl: {
+        originalUrl: "http://test.com",
+      },
+      auth: fakeAuthenticatedAuthState,
+    });
+
+    const shortenUrlSpy = vi.spyOn(urlService, "shortenUrl");
+
+    renderWithProviders(<NewShortUrlPage />, { store });
+
+    const submitButton = screen.getByRole("button");
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(shortenUrlSpy).toHaveBeenCalledTimes(1);
+      expect(shortenUrlSpy).toHaveBeenCalledWith({
+        originalUrl: "http://test.com",
+      });
+    });
+  });
+
+  it("redirects to ROUTES.login when handling url submit without beeing logged in.", () => {
+    const store = setupStore({
+      newShortUrl: {
+        originalUrl: "http://test.com",
+      },
+    });
+
+    renderWithProviders(<NewShortUrlPage />, { store });
+
+    const submitButton = screen.getByRole("button");
+    fireEvent.click(submitButton);
+
+    expect(mockedUseNavigate).toHaveBeenCalledTimes(1);
+    expect(mockedUseNavigate).toHaveBeenCalledWith(ROUTES.login);
   });
 
   it("resets the store when it gets a successful answer from the url-service and redirects to ROUTES.myUrlDetail()", async () => {

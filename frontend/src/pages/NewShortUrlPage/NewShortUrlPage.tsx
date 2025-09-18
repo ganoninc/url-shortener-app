@@ -16,6 +16,7 @@ import loadingSvg from "../../assets/loading.svg";
 import Page from "../../components/Page/Page";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routePaths";
+import { useLoggedIn } from "../../hooks/useLoggedIn";
 
 type NewShortUrlPageState =
   | {
@@ -40,6 +41,7 @@ export default function NewShortUrlPage() {
     status: "initial",
   });
   const navigate = useNavigate();
+  const isLoggedIn = useLoggedIn();
 
   const isOriginalUrlValid = isValidHttpUrl(originalUrl);
   const UrlInputState: TextInputState =
@@ -50,7 +52,14 @@ export default function NewShortUrlPage() {
   }
 
   function handleUrlSubmit() {
+    if (!isLoggedIn) {
+      window.alert("You must log in before shortening a URL.");
+      navigate(ROUTES.login);
+      return;
+    }
+
     setPageState({ status: "loading" });
+
     urlService
       .shortenUrl({
         originalUrl,

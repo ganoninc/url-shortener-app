@@ -1,10 +1,9 @@
 import { NavLink } from "react-router-dom";
 import styles from "./Header.module.css";
-import { useAppSelector } from "../../hooks/hooks";
-import { selectJwt } from "../../redux/authSlice";
+import { useLoggedIn } from "../../hooks/useLoggedIn";
 
 export default function Header() {
-  const isLoggedIn = useAppSelector(selectJwt);
+  const isLoggedIn = useLoggedIn();
 
   return (
     <div className={styles.navbar}>

@@ -7,15 +7,27 @@ import { BrowserRouter } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorBoudaryFallbackView from "./components/ErrorBoudaryFallbackView/ErrorBoudaryFallbackView.tsx";
 import { store } from "./redux/store.ts";
+import { isMSWEnabled } from "./config/msw.ts";
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <ErrorBoundary FallbackComponent={ErrorBoudaryFallbackView}>
-      <BrowserRouter>
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </BrowserRouter>
-    </ErrorBoundary>
-  </StrictMode>
-);
+async function enableMocking() {
+  if (!isMSWEnabled || typeof window === "undefined") {
+    return;
+  }
+
+  const { worker } = await import("./mocks/browser.ts");
+  return worker.start();
+}
+
+enableMocking().then(() => {
+  createRoot(document.getElementById("root")!).render(
+    <StrictMode>
+      <ErrorBoundary FallbackComponent={ErrorBoudaryFallbackView}>
+        <BrowserRouter>
+          <Provider store={store}>
+            <App />
+          </Provider>
+        </BrowserRouter>
+      </ErrorBoundary>
+    </StrictMode>
+  );
+});

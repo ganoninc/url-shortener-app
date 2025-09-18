@@ -5,7 +5,7 @@ import { fakeShortenURLResponse } from "./fakes";
 const API_GATEWAY_URL = import.meta.env.VITE_API_GATEWAY_URL;
 
 export const handlers = [
-  http.post("/" + API_GATEWAY_URL + "/url/shorten", () => {
+  http.post(`${API_GATEWAY_URL}/url/shorten`, () => {
     return HttpResponse.json<ShortenURLResponseDTO>(fakeShortenURLResponse);
   }),
 ];
