@@ -5,7 +5,8 @@ base.ts
 common.ts
 configuration.ts
 docs/ShortenURLRequestDTO.md
+docs/ShortenURLResponseDTO.md
 docs/UrlControllerApi.md
-docs/UrlMapping.md
+docs/UserUrlDTO.md
 git_push.sh
 index.ts

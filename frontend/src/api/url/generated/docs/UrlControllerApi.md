@@ -4,8 +4,62 @@ All URIs are relative to *http://localhost:8082*
 
 |Method | HTTP request | Description|
 |------------- | ------------- | -------------|
+|[**getUserUrl**](#getuserurl) | **GET** /my-urls/{shortId} | Get user\&#39;s shortened URL|
 |[**getUserUrls**](#getuserurls) | **GET** /my-urls | Get user\&#39;s URLs|
 |[**shortenUrl**](#shortenurl) | **POST** /shorten | Shorten a URL|
+
+# **getUserUrl**
+> UserUrlDTO getUserUrl()
+
+Return details about a user\'s shortened URL
+
+### Example
+
+```typescript
+import {
+    UrlControllerApi,
+    Configuration
+} from './api';
+
+const configuration = new Configuration();
+const apiInstance = new UrlControllerApi(configuration);
+
+let shortId: string; // (default to undefined)
+
+const { status, data } = await apiInstance.getUserUrl(
+    shortId
+);
+```
+
+### Parameters
+
+|Name | Type | Description  | Notes|
+|------------- | ------------- | ------------- | -------------|
+| **shortId** | [**string**] |  | defaults to undefined|
+
+
+### Return type
+
+**UserUrlDTO**
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: application/json, */*
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+|**200** | Details about a user\&#39;s shortened URL |  -  |
+|**404** | User shortened URL not found |  -  |
+|**400** | User not logged in |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **getUserUrls**
 > Array<UserUrlDTO> getUserUrls()

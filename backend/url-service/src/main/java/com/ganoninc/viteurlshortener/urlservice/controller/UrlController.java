@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class UrlController {
@@ -87,5 +88,40 @@ public class UrlController {
                 .toList();
 
         return ResponseEntity.ok(urls);
+    }
+
+    @GetMapping("/my-urls/{shortId}")
+    @Operation(
+            summary = "Get user's shortened URL",
+            description = "Return details about a user's shortened URL",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Details about a user's shortened URL",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = UserUrlDTO.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User shortened URL not found"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "User not logged in"
+                    )
+            }
+    )
+    public ResponseEntity<UserUrlDTO> getUserUrl(@PathVariable String shortId) {
+        String userEmail = UserContext.getUserEmail();
+        if (userEmail == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Optional<UserUrlDTO> url = urlService.getUserUrl(shortId);
+
+        return url.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+
     }
 }

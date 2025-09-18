@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -113,5 +114,27 @@ public class UrlControllerTest {
                 .header("X-User-Sub", userEmail))
                 .andExpect(status().isOk())
                 .andExpect(content().string(objectMapper.writeValueAsString(urlMappings)));
+    }
+
+    @Test
+    void itShouldReturnDetailsOfAShortenedUrlWhenMyUrlsWithShortIdIsCalled() throws Exception {
+        UrlMapping urlMapping1 = FakeUrlMapping.builder().build();
+        UserUrlDTO userUrlDTO = UserUrlDTO.from(urlMapping1);
+
+        when(urlService.getUserUrl(urlMapping1.getShortId())).thenReturn(Optional.of(userUrlDTO));
+
+        mockMvc.perform((MockMvcRequestBuilders.get("/my-urls/" + urlMapping1.getShortId())
+                .header("X-User-Sub", urlMapping1.getUserEmail())))
+                .andExpect(status().isOk())
+                .andExpect(content().string(objectMapper.writeValueAsString(userUrlDTO)));
+    }
+
+    @Test
+    void itShouldReturn404NotFoundWhenMyUrlsWithShortIdIsCalledAndThereIsRecord() throws Exception {
+        when(urlService.getUserUrl("unknowShortId")).thenReturn(Optional.empty());
+
+        mockMvc.perform((MockMvcRequestBuilders.get("/my-urls/unknowShortId")
+                        .header("X-User-Sub", userEmail)))
+                .andExpect(status().isNotFound());
     }
 }
