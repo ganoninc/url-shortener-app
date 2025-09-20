@@ -17,13 +17,14 @@ import Page from "../../components/Page/Page";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../routePaths";
 import { useLoggedIn } from "../../hooks/useLoggedIn";
+import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 
 type NewShortUrlPageState =
   | {
       status: "initial";
     }
   | { status: "loading" }
-  | { status: "error"; error: string };
+  | { status: "error"; errorMessage: string };
 
 function isValidHttpUrl(str: string) {
   try {
@@ -76,7 +77,7 @@ export default function NewShortUrlPage() {
             : typeof reason === "string"
             ? reason
             : JSON.stringify(reason);
-        setPageState({ status: "error", error: message });
+        setPageState({ status: "error", errorMessage: message });
       });
   }
 
@@ -102,10 +103,10 @@ export default function NewShortUrlPage() {
       </div>
 
       {pageState.status === "error" && (
-        <div className={styles.errorContainer}>
-          <p>Something went wrong: "{pageState.error}".</p>
-          <p>Please try again later.</p>
-        </div>
+        <ErrorMessage
+          message={pageState.errorMessage}
+          suggestedSolution="Please try again in a few minutes."
+        />
       )}
 
       {pageState.status === "loading" && (
