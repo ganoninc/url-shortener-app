@@ -2,8 +2,7 @@ import axios from "axios";
 import { store, type RootState } from "../redux/store";
 import type { Store } from "@reduxjs/toolkit";
 import { UrlControllerApi } from "./url/generated";
-
-const API_GATEWAY_URL = import.meta.env.VITE_API_GATEWAY_URL;
+import { apiGatewayUrl } from "../config/apiGateway";
 
 const createClient = (store: Store<RootState>) => {
   const client = axios.create({
@@ -29,6 +28,6 @@ const apiClient = createClient(store);
 
 export const urlService = new UrlControllerApi(
   undefined,
-  API_GATEWAY_URL + "/url",
+  apiGatewayUrl + "/url",
   apiClient
 );

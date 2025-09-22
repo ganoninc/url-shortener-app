@@ -13,8 +13,7 @@ import { fakeShortenURLResponse } from "../../mocks/fakes";
 import { fakeAuthenticatedAuthState } from "../../redux/fakes";
 import { urlService } from "../../api/client";
 import { http, HttpResponse } from "msw";
-
-const API_GATEWAY_URL = import.meta.env.VITE_API_GATEWAY_URL;
+import { apiGatewayUrl } from "../../config/apiGateway";
 
 const mockedUseNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
@@ -181,7 +180,7 @@ describe("NewShortUrlPage", () => {
 
   it("displays an error when it gets an error from url-service", async () => {
     server.use(
-      http.post(`${API_GATEWAY_URL}/url/shorten`, () => {
+      http.post(`${apiGatewayUrl}/url/shorten`, () => {
         return new HttpResponse(null, { status: 500 });
       })
     );

@@ -1,11 +1,10 @@
 import { http, HttpResponse } from "msw";
-import type { ShortenURLResponseDTO } from "../api/url/generated/index";
-import { fakeShortenURLResponse } from "./fakes";
-
-const API_GATEWAY_URL = import.meta.env.VITE_API_GATEWAY_URL;
+import type { ShortenURLResponseDTO, UserUrlDTO } from "../api/url/generated";
+import { fakeShortenURLResponse, fakeUserUrlReponse } from "./fakes";
+import { apiGatewayUrl } from "../config/apiGateway";
 
 export const handlers = [
-  http.post(`${API_GATEWAY_URL}/url/shorten`, () => {
+  http.post(`${apiGatewayUrl}/url/shorten`, () => {
     return HttpResponse.json<ShortenURLResponseDTO>(fakeShortenURLResponse);
   }),
 ];

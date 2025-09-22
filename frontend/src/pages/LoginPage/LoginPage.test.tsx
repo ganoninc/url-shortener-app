@@ -4,10 +4,9 @@ import { setCredentials } from "../../redux/authSlice";
 import LoginPage from "./LoginPage";
 import { renderWithProviders } from "../../utils/test-utils";
 import { setupStore } from "../../redux/store";
+import { apiGatewayUrl } from "../../config/apiGateway";
 
-vi.stubEnv("VITE_API_GATEWAY_URL", "http://localhost");
-
-const API_GATEWAY_URL = import.meta.env.VITE_API_GATEWAY_URL;
+vi.stubEnv("VITE_apiGatewayUrl", "http://localhost");
 
 const jwtToken = "fake-jwt-token";
 const userEmail = "user@test.com";
@@ -39,7 +38,7 @@ describe("LoginPage", () => {
 
     expect(window.open).toHaveBeenCalledTimes(1);
     expect(window.open).toHaveBeenCalledWith(
-      API_GATEWAY_URL + "/auth/oauth2/authorization/google",
+      apiGatewayUrl + "/auth/oauth2/authorization/google",
       "viteUrlShortenerOauthLogin",
       "width=500,height=600"
     );
@@ -60,7 +59,7 @@ describe("LoginPage", () => {
     window.dispatchEvent(
       new MessageEvent("message", {
         data: { token: jwtToken, email: userEmail },
-        origin: API_GATEWAY_URL,
+        origin: apiGatewayUrl,
       })
     );
 
@@ -83,7 +82,7 @@ describe("LoginPage", () => {
     fireEvent.click(screen.getByRole("button", { name: /login with google/i }));
     const messageEvent = new MessageEvent("message", {
       data: { token: jwtToken, email: userEmail },
-      origin: API_GATEWAY_URL,
+      origin: apiGatewayUrl,
     });
     window.dispatchEvent(messageEvent);
 

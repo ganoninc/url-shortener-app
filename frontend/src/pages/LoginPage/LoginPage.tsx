@@ -5,20 +5,20 @@ import Button from "../../components/Button/Button";
 import Page from "../../components/Page/Page";
 import { fakeAuthenticatedAuthState } from "../../redux/fakes";
 import { isMSWEnabled } from "../../config/msw";
+import { apiGatewayUrl } from "../../config/apiGateway";
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
-  const API_GATEWAY_URL = import.meta.env.VITE_API_GATEWAY_URL;
 
   function handleLogin() {
     const popup = window.open(
-      API_GATEWAY_URL + "/auth/oauth2/authorization/google",
+      apiGatewayUrl + "/auth/oauth2/authorization/google",
       "viteUrlShortenerOauthLogin",
       "width=500,height=600"
     );
 
     function receiveMessage(event: MessageEvent) {
-      if (event.origin !== API_GATEWAY_URL) return;
+      if (event.origin !== apiGatewayUrl) return;
 
       const { token, email } = event.data;
       if (token && email) {
