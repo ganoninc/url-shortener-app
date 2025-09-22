@@ -12,6 +12,9 @@ import { ROUTES } from "../../routePaths";
 import { fakeShortenURLResponse } from "../../mocks/fakes";
 import { fakeAuthenticatedAuthState } from "../../redux/fakes";
 import { urlService } from "../../api/client";
+import { http, HttpResponse } from "msw";
+
+const API_GATEWAY_URL = import.meta.env.VITE_API_GATEWAY_URL;
 
 const mockedUseNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
@@ -173,6 +176,38 @@ describe("NewShortUrlPage", () => {
       expect(mockedUseNavigate).toHaveBeenCalledWith(
         ROUTES.myUrlDetail(fakeShortenURLResponse.shortId)
       );
+    });
+  });
+
+  it("displays an error when it gets an error from url-service", async () => {
+    server.use(
+      http.post(`${API_GATEWAY_URL}/url/shorten`, () => {
+        return new HttpResponse(null, { status: 500 });
+      })
+    );
+    const store = setupStore({
+      newShortUrl: {
+        originalUrl: "http://localhost",
+      },
+      auth: fakeAuthenticatedAuthState,
+    });
+    vi.spyOn(store, "dispatch");
+    renderWithProviders(<NewShortUrlPage />, { store });
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+
+    const submitButton = screen.getByRole("button");
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      const errorMessage = screen.getByRole("alert");
+      expect(errorMessage).toBeInTheDocument();
+      expect(errorMessage).toHaveTextContent(
+        "Request failed with status code 500"
+      );
+
+      expect(mockedUseNavigate).toHaveBeenCalledTimes(0);
+      expect(store.dispatch).toHaveBeenCalledTimes(0);
     });
   });
 });
