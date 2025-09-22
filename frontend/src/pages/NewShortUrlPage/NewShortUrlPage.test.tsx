@@ -24,9 +24,7 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-Object.defineProperty(window, "alert", {
-  value: vi.fn(),
-});
+window.alert = vi.fn();
 
 describe("NewShortUrlPage", () => {
   beforeAll(() => server.listen());
