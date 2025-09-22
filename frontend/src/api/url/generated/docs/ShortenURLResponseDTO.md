@@ -6,7 +6,7 @@ Response containing the shortened URL ID
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**shortId** | **string** | The shortened identifier for the URL | [optional] [default to undefined]
+**shortId** | **string** | The shortened identifier for the URL | [default to undefined]
 
 ## Example
 

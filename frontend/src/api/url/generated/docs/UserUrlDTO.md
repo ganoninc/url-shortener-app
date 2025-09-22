@@ -6,9 +6,9 @@ Response containing the shortened URL id, the original URL, and its creation dat
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**shortId** | **string** | The shortened identifier of the URL | [optional] [default to undefined]
-**originalUrl** | **string** | The original URL | [optional] [default to undefined]
-**createdAt** | **string** | The creation date | [optional] [default to undefined]
+**shortId** | **string** | The shortened identifier of the URL | [default to undefined]
+**originalUrl** | **string** | The original URL | [default to undefined]
+**createdAt** | **string** | The creation date | [default to undefined]
 
 ## Example
 

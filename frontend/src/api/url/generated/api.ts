@@ -47,7 +47,7 @@ export interface ShortenURLResponseDTO {
      * @type {string}
      * @memberof ShortenURLResponseDTO
      */
-    'shortId'?: string;
+    'shortId': string;
 }
 /**
  * Response containing the shortened URL id, the original URL, and its creation date
@@ -60,19 +60,19 @@ export interface UserUrlDTO {
      * @type {string}
      * @memberof UserUrlDTO
      */
-    'shortId'?: string;
+    'shortId': string;
     /**
      * The original URL
      * @type {string}
      * @memberof UserUrlDTO
      */
-    'originalUrl'?: string;
+    'originalUrl': string;
     /**
      * The creation date
      * @type {string}
      * @memberof UserUrlDTO
      */
-    'createdAt'?: string;
+    'createdAt': string;
 }
 
 /**
