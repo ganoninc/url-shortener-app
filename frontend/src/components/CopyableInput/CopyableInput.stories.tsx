@@ -16,4 +16,4 @@ export default meta;
 
 type Story = StoryObj<typeof CopyableInput>;
 
-export const Normal: Story = {};
+export const Default: Story = {};

@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import styles from "./CopyableInput.module.css";
 
 type CopyableInputProps = {
   value: string;
@@ -17,9 +18,14 @@ export default function CopyableInput({ value }: CopyableInputProps) {
   }
 
   return (
-    <>
-      <input ref={textInputRef} value={value} disabled={true} />
+    <div className={styles.container}>
+      <input
+        className={styles.textInput}
+        ref={textInputRef}
+        value={value}
+        disabled={true}
+      />
       <button onClick={handleClick}>Copy to clipboard</button>
-    </>
+    </div>
   );
 }
