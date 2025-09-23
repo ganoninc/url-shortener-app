@@ -1,7 +1,11 @@
 import type { Preview } from "@storybook/react-vite";
+import { initialize, mswLoader } from "msw-storybook-addon";
+import { handlers } from "../src/mocks/handlers";
 
 import "../src/index.css";
 import "./preview.css";
+
+initialize(undefined, handlers);
 
 const preview: Preview = {
   parameters: {
@@ -19,6 +23,7 @@ const preview: Preview = {
       test: "todo",
     },
   },
+  loaders: [mswLoader],
 };
 
 export default preview;

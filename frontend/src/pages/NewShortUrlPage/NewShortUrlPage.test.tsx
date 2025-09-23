@@ -178,9 +178,13 @@ describe("NewShortUrlPage", () => {
 
   it("displays an error when it gets an error from url-service", async () => {
     server.use(
-      http.post(`${apiGatewayUrl}/url/shorten`, () => {
-        return new HttpResponse(null, { status: 500 });
-      })
+      http.post(
+        `${apiGatewayUrl}/url/shorten`,
+        () => {
+          return new HttpResponse(null, { status: 500 });
+        },
+        { once: true }
+      )
     );
     const store = setupStore({
       newShortUrl: {
