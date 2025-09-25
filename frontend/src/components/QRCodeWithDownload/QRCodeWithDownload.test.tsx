@@ -6,6 +6,8 @@ describe("QRCodeWithDownload", () => {
   beforeAll(() => {
     URL.createObjectURL = vi.fn(() => "blob:fake-url");
     URL.revokeObjectURL = vi.fn();
+
+    HTMLAnchorElement.prototype.click = vi.fn();
   });
 
   afterEach(() => {

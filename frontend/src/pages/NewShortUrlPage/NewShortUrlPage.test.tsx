@@ -28,10 +28,12 @@ window.alert = vi.fn();
 
 describe("NewShortUrlPage", () => {
   beforeAll(() => server.listen());
+
   afterEach(() => {
     server.resetHandlers();
     vi.clearAllMocks();
   });
+
   afterAll(() => server.close());
 
   it("dispatches updateOriginalUrl action when original URL input has a new value", () => {
@@ -135,7 +137,7 @@ describe("NewShortUrlPage", () => {
     });
   });
 
-  it("redirects to ROUTES.login when handling url submit without beeing logged in.", () => {
+  it("redirects to ROUTES.login when handling url submit without beeing logged in.", async () => {
     const store = setupStore({
       newShortUrl: {
         originalUrl: "http://test.com",
@@ -147,8 +149,10 @@ describe("NewShortUrlPage", () => {
     const submitButton = screen.getByRole("button");
     fireEvent.click(submitButton);
 
-    expect(mockedUseNavigate).toHaveBeenCalledTimes(1);
-    expect(mockedUseNavigate).toHaveBeenCalledWith(ROUTES.login);
+    await waitFor(() => {
+      expect(mockedUseNavigate).toHaveBeenCalledTimes(1);
+      expect(mockedUseNavigate).toHaveBeenCalledWith(ROUTES.login);
+    });
   });
 
   it("resets the store when it gets a successful answer from the url-service and redirects to ROUTES.myUrlDetail()", async () => {

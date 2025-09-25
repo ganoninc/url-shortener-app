@@ -5,7 +5,9 @@ exports[`LoginPage > matches the login page snapshot 1`] = `
   <div
     class="_page_508746"
   >
-    <h1>
+    <h1
+      class="_title_f7ee43"
+    >
       Login
     </h1>
     <button>
