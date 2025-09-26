@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import LogoutPage from "./pages/LogoutPage/LogoutPage";
 import NewShortUrlPage from "./pages/NewShortUrlPage/NewShortUrlPage";
 import { ROUTES } from "./routePaths";
+import ShortUrlPage from "./pages/ShortUrlPage/ShortUrlPage";
 
 export const routes = (isLoggedIn: boolean | null) => [
   {
@@ -24,11 +25,7 @@ export const routes = (isLoggedIn: boolean | null) => [
   },
   {
     path: ROUTES.myUrlDetail(),
-    element: isLoggedIn ? (
-      <>VIEW SHORTEN URL</>
-    ) : (
-      <Navigate to={ROUTES.login} />
-    ),
+    element: isLoggedIn ? <ShortUrlPage /> : <Navigate to={ROUTES.login} />,
   },
   {
     path: "*",

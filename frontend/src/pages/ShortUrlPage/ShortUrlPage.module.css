@@ -1,0 +1,30 @@
+.loadingContainer {
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4em;
+}
+
+.originalUrl {
+  text-align: center;
+}
+
+.shareShortUrl {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 3em;
+}
+
+.error {
+  gap: 1em;
+  text-align: center;
+}
+
+.error button {
+  margin-top: 1em;
+}

@@ -1,8 +1,18 @@
-import type { ShortenURLResponseDTO } from "../api/url/generated/index";
+import type {
+  ShortenURLResponseDTO,
+  UserUrlDTO,
+} from "../api/url/generated/index";
 
 export const fakeShortenURLResponse: ShortenURLResponseDTO = {
   shortId: "abc123",
 };
 
-export const fakeJwtToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzAwMDAwMDAwfQ.dGVzdC1zaWduYXR1cmUtbm90LXZhbGlk";
+export const fakeUserUrlReponse = (
+  shortId: string | undefined = "abcd123"
+): UserUrlDTO => {
+  return {
+    shortId,
+    originalUrl: "http://www.wikipedia.com/",
+    createdAt: "creation date",
+  };
+};
