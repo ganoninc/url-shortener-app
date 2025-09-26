@@ -9,6 +9,7 @@ import styles from "./ShortUrlPage.module.css";
 import { apiGatewayUrl } from "../../config/apiGateway";
 import CopyableInput from "../../components/CopyableInput/CopyableInput";
 import QRCodeWithDownload from "../../components/QRCodeWithDownload/QRCodeWithDownload";
+import Button from "../../components/Button/Button";
 
 type ShortUrlPageState =
   | {
@@ -83,7 +84,7 @@ export default function ShortUrlPage() {
       ) : (
         <div className={styles.error}>
           <ErrorMessage message={pageState.errorMessage} />
-          <button onClick={() => navigate(-1)}>Go back</button>
+          <Button onClick={() => navigate(-1)} label="Go back" />
         </div>
       )}
     </>

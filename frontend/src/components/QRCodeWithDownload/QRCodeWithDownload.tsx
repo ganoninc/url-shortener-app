@@ -1,6 +1,7 @@
 import QRCode from "react-qr-code";
 import styles from "./QRCodeWithDownload.module.css";
 import { useRef } from "react";
+import Button from "../Button/Button";
 
 type QRCodeWithDownloadProps = {
   value: string;
@@ -39,7 +40,7 @@ export default function QRCodeWithDownload({ value }: QRCodeWithDownloadProps) {
         style={{ height: "auto", maxWidth: "100%", width: "100%" }}
         viewBox={`0 0 256 256`}
       />
-      <button onClick={handleDownload}>Download QR</button>
+      <Button label="Download QR" onClick={handleDownload} />
     </div>
   );
 }
