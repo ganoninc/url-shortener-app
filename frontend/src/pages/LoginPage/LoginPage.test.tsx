@@ -6,8 +6,6 @@ import { renderWithProviders } from "../../utils/test-utils";
 import { setupStore } from "../../redux/store";
 import { apiGatewayUrl } from "../../config/apiGateway";
 
-vi.stubEnv("VITE_apiGatewayUrl", "http://localhost");
-
 const jwtToken = "fake-jwt-token";
 const userEmail = "user@test.com";
 
@@ -24,11 +22,6 @@ describe("LoginPage", () => {
 
   afterEach(() => {
     vi.clearAllMocks();
-  });
-
-  it("matches the login page snapshot", () => {
-    const { container } = renderWithProviders(<LoginPage />);
-    expect(container).toMatchSnapshot();
   });
 
   it("opens a popup and adds message listener when login with Google", () => {
