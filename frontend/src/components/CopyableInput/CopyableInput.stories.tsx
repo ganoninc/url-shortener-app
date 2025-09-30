@@ -17,3 +17,9 @@ export default meta;
 type Story = StoryObj<typeof CopyableInput>;
 
 export const Default: Story = {};
+
+export const Inline: Story = {
+  args: {
+    inline: true,
+  },
+};

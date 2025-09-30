@@ -4,6 +4,14 @@
   gap: 1em;
 }
 
+.containerInline {
+  flex-direction: row;
+}
+
 .textInput {
   font-size: 2em;
+}
+
+.containerInline .textInput {
+  font-size: 1em;
 }

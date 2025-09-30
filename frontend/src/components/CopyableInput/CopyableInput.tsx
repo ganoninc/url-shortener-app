@@ -4,9 +4,15 @@ import Button from "../Button/Button";
 
 type CopyableInputProps = {
   value: string;
+  inline?: boolean;
+  hideCopyButton?: boolean;
 };
 
-export default function CopyableInput({ value }: CopyableInputProps) {
+export default function CopyableInput({
+  value,
+  inline = false,
+  hideCopyButton = false,
+}: CopyableInputProps) {
   const textInputRef = useRef<HTMLInputElement>(null);
 
   function handleClick() {
@@ -19,14 +25,24 @@ export default function CopyableInput({ value }: CopyableInputProps) {
   }
 
   return (
-    <div className={styles.container}>
+    <div
+      className={
+        inline
+          ? `${styles.container} ${styles.containerInline}`
+          : styles.container
+      }
+    >
       <input
         className={styles.textInput}
         ref={textInputRef}
         value={value}
         disabled={true}
       />
-      <Button label={"Copy to clipboard"} onClick={handleClick} />
+      {!hideCopyButton ? (
+        <Button label={"Copy to clipboard"} onClick={handleClick} />
+      ) : (
+        <></>
+      )}
     </div>
   );
 }
