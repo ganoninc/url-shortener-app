@@ -24,13 +24,16 @@ export default function Header() {
         </NavLink>
         {isLoggedIn && (
           <NavLink
-            className={({ isActive, isPending }) =>
-              isPending
+            className={({ isActive, isPending }) => {
+              const match =
+                isActive || location.pathname.startsWith("/my-urls");
+
+              return isPending
                 ? `${styles.link} ${styles.pending}`
-                : isActive
+                : match
                 ? `${styles.link} ${styles.active}`
-                : styles.link
-            }
+                : styles.link;
+            }}
             to="/my-urls"
             end
           >

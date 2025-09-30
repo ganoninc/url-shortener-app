@@ -1,0 +1,14 @@
+.loadingContainer {
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+  align-items: flex-end;
+}
+.error {
+  gap: 1em;
+  text-align: center;
+}
