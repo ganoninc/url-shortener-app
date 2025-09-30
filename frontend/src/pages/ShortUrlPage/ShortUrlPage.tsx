@@ -67,8 +67,12 @@ export default function ShortUrlPage() {
       ) : pageState.status === "loaded" ? (
         <div className={styles.container}>
           <div className={styles.originalUrl}>
-            Original url:{" "}
-            <a href={pageState.urlDetails?.originalUrl} target="_blank">
+            Destination:{" "}
+            <a
+              href={pageState.urlDetails?.originalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {pageState.urlDetails?.originalUrl}
             </a>
           </div>

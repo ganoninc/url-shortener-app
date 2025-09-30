@@ -40,7 +40,7 @@ export default function QRCodeWithDownload({ value }: QRCodeWithDownloadProps) {
         style={{ height: "auto", maxWidth: "100%", width: "100%" }}
         viewBox={`0 0 256 256`}
       />
-      <Button label="Download QR" onClick={handleDownload} />
+      <Button label="Download QR code" onClick={handleDownload} />
     </div>
   );
 }
