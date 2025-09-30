@@ -21,12 +21,20 @@ export const routes = (isLoggedIn: boolean | null) => [
     element: <NewShortUrlPage />,
   },
   {
-    path: ROUTES.myUrls,
+    path: ROUTES.userShortUrlList,
     element: isLoggedIn ? <ShortUrlListPage /> : <Navigate to={ROUTES.login} />,
   },
   {
-    path: ROUTES.myUrlDetail(),
+    path: ROUTES.userShortUrlDetail(),
     element: isLoggedIn ? <ShortUrlPage /> : <Navigate to={ROUTES.login} />,
+  },
+  {
+    path: ROUTES.userNewShortUrlCreated(),
+    element: isLoggedIn ? (
+      <ShortUrlPage newShortUrl />
+    ) : (
+      <Navigate to={ROUTES.login} />
+    ),
   },
   {
     path: "*",

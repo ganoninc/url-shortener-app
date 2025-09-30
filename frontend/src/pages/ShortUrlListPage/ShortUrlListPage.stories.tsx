@@ -20,7 +20,7 @@ const meta: Meta<typeof ShortUrlListPage> = {
       const store = makeStore(context.parameters.preloadedState || {});
 
       return (
-        <MemoryRouter initialEntries={[ROUTES.myUrlDetail("abcd")]}>
+        <MemoryRouter initialEntries={[ROUTES.userShortUrlDetail("abcd")]}>
           <Provider store={store}>
             <Routes>
               <Route path="/my-urls/:shortId" element={<Story />} />

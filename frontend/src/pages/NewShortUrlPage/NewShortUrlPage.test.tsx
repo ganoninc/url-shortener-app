@@ -155,7 +155,7 @@ describe("NewShortUrlPage", () => {
     });
   });
 
-  it("resets the store when it gets a successful answer from the url-service and redirects to ROUTES.myUrlDetail()", async () => {
+  it("resets the store when it gets a successful answer from the url-service and redirects to ROUTES.userShortUrlDetails()", async () => {
     const store = setupStore({
       newShortUrl: {
         originalUrl: "http://localhost",
@@ -175,7 +175,7 @@ describe("NewShortUrlPage", () => {
       );
       expect(mockedUseNavigate).toHaveBeenCalledTimes(1);
       expect(mockedUseNavigate).toHaveBeenCalledWith(
-        ROUTES.myUrlDetail(fakeShortenURLResponse.shortId)
+        ROUTES.userNewShortUrlCreated(fakeShortenURLResponse.shortId)
       );
     });
   });

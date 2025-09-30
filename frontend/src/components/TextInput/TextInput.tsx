@@ -23,20 +23,22 @@ export default function TextInput({
   }
 
   return (
-    <input
-      type="text"
-      value={value}
-      placeholder={placeholder}
-      onChange={handleChange}
-      disabled={isDisabled}
-      aria-invalid={validationState === "error"}
-      className={
-        validationState === "valid"
-          ? styles.isValid
-          : validationState === "error"
-          ? styles.hasError
-          : ""
-      }
-    />
+    <div className={styles.container}>
+      <input
+        type="text"
+        value={value}
+        placeholder={placeholder}
+        onChange={handleChange}
+        disabled={isDisabled}
+        aria-invalid={validationState === "error"}
+        className={
+          validationState === "valid"
+            ? styles.isValid
+            : validationState === "error"
+            ? styles.hasError
+            : ""
+        }
+      />
+    </div>
   );
 }

@@ -2,6 +2,8 @@ export const ROUTES = {
   home: "/",
   login: "/login",
   logout: "/logout",
-  myUrls: "/my-urls",
-  myUrlDetail: (shortId: string = ":shortId") => `/my-urls/${shortId}`,
+  userShortUrlList: "/my-urls",
+  userShortUrlDetail: (shortId: string = ":shortId") => `/my-urls/${shortId}`,
+  userNewShortUrlCreated: (shortId: string = ":shortId") =>
+    `/my-urls/${shortId}/success`,
 };

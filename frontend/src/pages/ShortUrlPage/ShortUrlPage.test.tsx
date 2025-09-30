@@ -53,6 +53,20 @@ describe("ShortUrlPage", () => {
     });
   });
 
+  it("displays different elements when the short url is newly created", async () => {
+    renderWithProviders(<ShortUrlPage newShortUrl />);
+
+    await waitFor(() => {
+      const shortUrlCopyableInput = screen.getByDisplayValue(
+        `${apiGatewayUrl}/${fakeUserUrlReponse().shortId}`
+      );
+      expect(shortUrlCopyableInput).toBeInTheDocument();
+
+      const qrCodeImg = screen.getByRole("img");
+      expect(qrCodeImg).toBeInTheDocument();
+    });
+  });
+
   it("displays an error when urlService is returning an error", async () => {
     server.use(
       http.get(`${apiGatewayUrl}/my-urls/${shortUrlData.shortId}}`, () => {

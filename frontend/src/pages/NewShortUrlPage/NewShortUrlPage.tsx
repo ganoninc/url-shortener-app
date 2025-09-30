@@ -68,7 +68,7 @@ export default function NewShortUrlPage() {
       .then((res) => {
         setPageState({ status: "initial" });
         dispatch(updateOriginalUrl({ originalUrl: "" }));
-        navigate(ROUTES.myUrlDetail(res.data.shortId));
+        navigate(ROUTES.userNewShortUrlCreated(res.data.shortId));
       })
       .catch((reason) => {
         const message =

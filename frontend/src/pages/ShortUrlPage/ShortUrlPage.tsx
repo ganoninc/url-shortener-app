@@ -10,6 +10,13 @@ import { apiGatewayUrl } from "../../config/apiGateway";
 import CopyableInput from "../../components/CopyableInput/CopyableInput";
 import QRCodeWithDownload from "../../components/QRCodeWithDownload/QRCodeWithDownload";
 import Button from "../../components/Button/Button";
+import moment from "moment";
+import Confetti from "react-confetti-boom";
+import { ROUTES } from "../../routePaths";
+
+type ShortUrlPageProps = {
+  newShortUrl?: boolean;
+};
 
 type ShortUrlPageState =
   | {
@@ -21,7 +28,9 @@ type ShortUrlPageState =
     }
   | { status: "error"; errorMessage: string };
 
-export default function ShortUrlPage() {
+export default function ShortUrlPage({
+  newShortUrl = false,
+}: ShortUrlPageProps) {
   const [pageState, setPageState] = useState<ShortUrlPageState>({
     status: "loading",
   });
@@ -56,7 +65,12 @@ export default function ShortUrlPage() {
 
   return (
     <>
-      <Title content="Share short URL" level="1" />
+      <Title
+        content={
+          newShortUrl ? "Your Short Link Is Ready!" : "Short URL Details"
+        }
+        level="1"
+      />
       {pageState.status === "loading" ? (
         <div className={styles.loadingContainer}>
           <Title content="Loading..." level="3" />
@@ -66,15 +80,41 @@ export default function ShortUrlPage() {
         </div>
       ) : pageState.status === "loaded" ? (
         <div className={styles.container}>
-          <div className={styles.originalUrl}>
-            Destination:{" "}
-            <a
-              href={pageState.urlDetails?.originalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {pageState.urlDetails?.originalUrl}
-            </a>
+          {newShortUrl && (
+            <Confetti
+              shapeSize={12}
+              spreadDeg={50}
+              particleCount={250}
+              y={0.25}
+              launchSpeed={1.5}
+            />
+          )}
+          <div className={styles.originalUrlAndCreatedAt}>
+            {!newShortUrl && (
+              <div className={styles.backButton}>
+                {" "}
+                <Button
+                  label={"⬅️ Go back to your short URLs"}
+                  onClick={() => navigate(ROUTES.userShortUrlList)}
+                />
+              </div>
+            )}
+            <div className={styles.originalUrl}>
+              Destination:{" "}
+              <a
+                href={pageState.urlDetails?.originalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {pageState.urlDetails?.originalUrl}
+              </a>
+            </div>
+            {!newShortUrl && (
+              <div className={styles.createdAt}>
+                Date created:{" "}
+                {moment(pageState.urlDetails?.createdAt).format("LLL")}
+              </div>
+            )}
           </div>
           <div className={styles.shareShortUrl}>
             <div className={styles.shareAsText}>
@@ -84,6 +124,20 @@ export default function ShortUrlPage() {
               <QRCodeWithDownload value={shortUrl} />
             </div>
           </div>
+
+          {newShortUrl && (
+            <div className={styles.suggestedNextActions}>
+              {" "}
+              <Button
+                label="➕ Shorten another URL"
+                onClick={() => navigate(ROUTES.home)}
+              />
+              <Button
+                label={"View all your URLs"}
+                onClick={() => navigate(ROUTES.userShortUrlList)}
+              />
+            </div>
+          )}
         </div>
       ) : (
         <div className={styles.error}>

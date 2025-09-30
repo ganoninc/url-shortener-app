@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import styles from "./Header.module.css";
 import { useLoggedIn } from "../../hooks/useLoggedIn";
+import { ROUTES } from "../../routePaths";
 
 export default function Header() {
   const isLoggedIn = useLoggedIn();
@@ -17,7 +18,7 @@ export default function Header() {
               ? `${styles.link} ${styles.active}`
               : styles.link
           }
-          to="/"
+          to={ROUTES.home}
           end
         >
           Shorten an URL
@@ -34,10 +35,10 @@ export default function Header() {
                 ? `${styles.link} ${styles.active}`
                 : styles.link;
             }}
-            to="/my-urls"
+            to={ROUTES.userShortUrlList}
             end
           >
-            My URLs
+            My short URLs
           </NavLink>
         )}
         {!isLoggedIn && (
@@ -49,7 +50,7 @@ export default function Header() {
                 ? `${styles.link} ${styles.active}`
                 : styles.link
             }
-            to="/login"
+            to={ROUTES.login}
             end
           >
             Login
@@ -64,7 +65,7 @@ export default function Header() {
                 ? `${styles.link} ${styles.active}`
                 : styles.link
             }
-            to="/logout"
+            to={ROUTES.logout}
             end
           >
             Logout

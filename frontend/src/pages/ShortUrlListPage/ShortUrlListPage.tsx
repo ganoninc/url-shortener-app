@@ -48,7 +48,7 @@ export default function ShortUrlListPage() {
 
   return (
     <>
-      <Title content="My URLs" level="1" />
+      <Title content="My short URLs" level="1" />
       {pageState.status === "loading" ? (
         <div className={styles.loadingContainer}>
           <Title content="Loading..." level="3" />
@@ -59,7 +59,7 @@ export default function ShortUrlListPage() {
       ) : pageState.status === "loaded" ? (
         <div className={styles.container}>
           <Button
-            label="Shorten another URL"
+            label="➕ Shorten another URL"
             onClick={() => navigate(ROUTES.home)}
           />
           <Table
@@ -85,7 +85,7 @@ export default function ShortUrlListPage() {
                 <Button
                   label="See details"
                   onClick={() => {
-                    navigate(ROUTES.myUrlDetail(shortUrl.shortId));
+                    navigate(ROUTES.userShortUrlDetail(shortUrl.shortId));
                   }}
                 />,
               ] as const;
