@@ -25,7 +25,12 @@ export default function Table<TH extends readonly string[]>({
       ))}
       {rows.map((row, rowIndex) =>
         row.map((cell, cellIndex) => (
-          <div key={`row-${rowIndex}-cell-${cellIndex}`}>{cell}</div>
+          <div
+            key={`row-${rowIndex}-cell-${cellIndex}`}
+            className={styles.cell}
+          >
+            {cell}
+          </div>
         ))
       )}
     </div>
