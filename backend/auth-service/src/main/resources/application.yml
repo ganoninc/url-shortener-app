@@ -20,9 +20,22 @@ spring:
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
 
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
 jwt:
   secret: ${JWT_SECRET}
-  expiration: 3600000
+  #  15 minutes
+  expirationMs: 900000
+  #  24 hours
+  refreshExpirationMs: 86400000
 
 app:
   frontend-origin: ${FRONTEND_ORIGIN}
