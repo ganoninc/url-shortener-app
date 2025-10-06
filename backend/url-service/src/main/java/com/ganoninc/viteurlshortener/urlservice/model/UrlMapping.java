@@ -17,13 +17,13 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UrlMapping {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String originalUrl;
-    private String shortId;
-    private String userEmail;
+  private String originalUrl;
+  private String shortId;
+  private String userEmail;
 
-    private Instant createdAt = Instant.now();
+  private Instant createdAt = Instant.now();
 }

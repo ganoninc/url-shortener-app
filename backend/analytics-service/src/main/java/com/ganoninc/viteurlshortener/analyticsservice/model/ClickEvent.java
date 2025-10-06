@@ -15,12 +15,12 @@ import java.time.Instant;
 @Builder
 @Entity
 public class ClickEvent {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private String shortId;
-    private Instant timestamp;
-    private String ip;
-    private String userAgent;
+  private String shortId;
+  private Instant timestamp;
+  private String ip;
+  private String userAgent;
 }

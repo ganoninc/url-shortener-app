@@ -10,20 +10,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class UrlCreateProducerImpl implements UrlCreatedProducer {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+  private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public UrlCreateProducerImpl(KafkaTemplate<String, String> kafkaTemplate) {
-        this.kafkaTemplate = kafkaTemplate;
-    }
+  public UrlCreateProducerImpl(KafkaTemplate<String, String> kafkaTemplate) {
+    this.kafkaTemplate = kafkaTemplate;
+  }
 
-    @Override
-    public void sendUrlCreated(UrlMapping urlMapping) {
-        String payload = new JSONObject()
-                .put("shortId", urlMapping.getShortId())
-                .put("originalUrl", urlMapping.getOriginalUrl())
-                .put("userEmail", urlMapping.getUserEmail())
-                .toString();
+  @Override
+  public void sendUrlCreated(UrlMapping urlMapping) {
+    String payload =
+        new JSONObject()
+            .put("shortId", urlMapping.getShortId())
+            .put("originalUrl", urlMapping.getOriginalUrl())
+            .put("userEmail", urlMapping.getUserEmail())
+            .toString();
 
-        kafkaTemplate.send("url-created", payload);
-    }
+    kafkaTemplate.send("url-created", payload);
+  }
 }

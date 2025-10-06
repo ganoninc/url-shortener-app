@@ -17,34 +17,32 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @WebMvcTest(AnalyticsController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class AnalyticsControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-    @MockitoBean
-    private AnalyticsService analyticsService;
+  @MockitoBean private AnalyticsService analyticsService;
 
-    @Test
-    public void itShouldReturnStatsOfAShortenedUrl() throws Exception {
-        long clickCount = 10;
-        ClickEvent clickEvent = FakeClickEvent.getFakeClickEvent(1L);
-        ClickEvent clickEvent2 = FakeClickEvent.getFakeClickEvent(2L);
-        List<ClickEvent> listOfClickEvents = List.of(clickEvent, clickEvent2);
+  @Test
+  public void itShouldReturnStatsOfAShortenedUrl() throws Exception {
+    long clickCount = 10;
+    ClickEvent clickEvent = FakeClickEvent.getFakeClickEvent(1L);
+    ClickEvent clickEvent2 = FakeClickEvent.getFakeClickEvent(2L);
+    List<ClickEvent> listOfClickEvents = List.of(clickEvent, clickEvent2);
 
-        when(analyticsService.getClickCount(clickEvent.getShortId())).thenReturn(clickCount);
-        when(analyticsService.getAllEvents(clickEvent.getShortId())).thenReturn(listOfClickEvents);
+    when(analyticsService.getClickCount(clickEvent.getShortId())).thenReturn(clickCount);
+    when(analyticsService.getAllEvents(clickEvent.getShortId())).thenReturn(listOfClickEvents);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/" + clickEvent.getShortId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.clickCount").value(clickCount))
-                .andExpect(jsonPath("$.events[0].shortId").value(clickEvent.getShortId()))
-                .andExpect(jsonPath("$.events[1].shortId").value(clickEvent2.getShortId()));
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/" + clickEvent.getShortId()))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.clickCount").value(clickCount))
+        .andExpect(jsonPath("$.events[0].shortId").value(clickEvent.getShortId()))
+        .andExpect(jsonPath("$.events[1].shortId").value(clickEvent2.getShortId()));
 
-        verify(analyticsService, times(1)).getClickCount(clickEvent.getShortId());
-        verify(analyticsService, times(1)).getAllEvents(clickEvent.getShortId());
-    }
+    verify(analyticsService, times(1)).getClickCount(clickEvent.getShortId());
+    verify(analyticsService, times(1)).getAllEvents(clickEvent.getShortId());
+  }
 }

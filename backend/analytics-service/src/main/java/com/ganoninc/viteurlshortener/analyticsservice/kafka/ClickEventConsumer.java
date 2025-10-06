@@ -13,27 +13,27 @@ import java.time.Instant;
 
 @Component
 public class ClickEventConsumer {
-    private final ClickRepository clickRepository;
-    private static final Logger logger = LoggerFactory.getLogger(ClickEventConsumer.class);
+  private static final Logger logger = LoggerFactory.getLogger(ClickEventConsumer.class);
+  private final ClickRepository clickRepository;
 
-    public ClickEventConsumer(ClickRepository clickRepository) {
-        this.clickRepository = clickRepository;
+  public ClickEventConsumer(ClickRepository clickRepository) {
+    this.clickRepository = clickRepository;
+  }
+
+  @KafkaListener(topics = "url_clicked", groupId = "analytics-group")
+  public void handleUrlClickedMessage(String message) {
+    try {
+      JSONObject messageAsJson = new JSONObject(message);
+
+      ClickEvent clickEvent = new ClickEvent();
+      clickEvent.setShortId(messageAsJson.getString("shortId"));
+      clickEvent.setTimestamp(Instant.parse(messageAsJson.getString("timestamp")));
+      clickEvent.setIp(messageAsJson.getString("ip"));
+      clickEvent.setUserAgent(messageAsJson.getString("userAgent"));
+
+      clickRepository.save(clickEvent);
+    } catch (JSONException e) {
+      logger.error("Failed to process click event message: {}", message, e);
     }
-
-    @KafkaListener(topics = "url_clicked", groupId = "analytics-group")
-    public void handleUrlClickedMessage(String message){
-        try {
-            JSONObject messageAsJson = new JSONObject(message);
-
-            ClickEvent clickEvent = new ClickEvent();
-            clickEvent.setShortId(messageAsJson.getString("shortId"));
-            clickEvent.setTimestamp(Instant.parse(messageAsJson.getString("timestamp")));
-            clickEvent.setIp(messageAsJson.getString("ip"));
-            clickEvent.setUserAgent(messageAsJson.getString("userAgent"));
-
-            clickRepository.save(clickEvent);
-        } catch (JSONException e) {
-            logger.error("Failed to process click event message: {}", message, e);
-        }
-    }
+  }
 }

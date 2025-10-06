@@ -1,7 +1,6 @@
 package com.ganoninc.viteurlshortener.urlservice.util;
 
 import com.ganoninc.viteurlshortener.urlservice.model.UrlMapping;
-
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
 

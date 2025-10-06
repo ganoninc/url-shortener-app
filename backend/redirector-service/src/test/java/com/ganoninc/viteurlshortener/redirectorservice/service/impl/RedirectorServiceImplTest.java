@@ -1,19 +1,18 @@
 package com.ganoninc.viteurlshortener.redirectorservice.service.impl;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+
 import com.ganoninc.viteurlshortener.redirectorservice.kafka.ClickEventProducer;
 import com.ganoninc.viteurlshortener.redirectorservice.model.UrlMapping;
 import com.ganoninc.viteurlshortener.redirectorservice.repository.UrlRepository;
 import com.ganoninc.viteurlshortener.redirectorservice.util.FakeUrlMapping;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RedirectorServiceImplTest {

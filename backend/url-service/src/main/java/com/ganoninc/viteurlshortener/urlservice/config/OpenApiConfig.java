@@ -8,7 +8,5 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
     info = @Info(title = "Vite URL Shortener - URL Service", version = "1.0"),
-    security = @SecurityRequirement(name = "bearerAuth")
-)
-public class OpenApiConfig {
-}
+    security = @SecurityRequirement(name = "bearerAuth"))
+public class OpenApiConfig {}

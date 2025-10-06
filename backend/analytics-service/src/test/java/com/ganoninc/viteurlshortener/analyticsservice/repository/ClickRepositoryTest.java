@@ -8,19 +8,17 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @DataJpaTest
 public class ClickRepositoryTest {
 
-    @Autowired
-    private ClickRepository clickRepository;
+  @Autowired private ClickRepository clickRepository;
 
-    @Test
-    public void itShouldSaveAndFind() {
-        ClickEvent clickEvent = FakeClickEvent.getFakeClickEvent();
-        clickRepository.save(clickEvent);
+  @Test
+  public void itShouldSaveAndFind() {
+    ClickEvent clickEvent = FakeClickEvent.getFakeClickEvent();
+    clickRepository.save(clickEvent);
 
-        ClickEvent foundClickEvent = clickRepository.findByShortId(clickEvent.getShortId()).get(0);
-        assertEquals(clickEvent.getShortId(), foundClickEvent.getShortId());
-    }
+    ClickEvent foundClickEvent = clickRepository.findByShortId(clickEvent.getShortId()).get(0);
+    assertEquals(clickEvent.getShortId(), foundClickEvent.getShortId());
+  }
 }

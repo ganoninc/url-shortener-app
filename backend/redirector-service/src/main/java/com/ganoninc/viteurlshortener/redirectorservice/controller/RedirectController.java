@@ -13,19 +13,20 @@ import java.util.Optional;
 
 @RestController
 public class RedirectController {
-    private final RedirectorService redirectorService;
+  private final RedirectorService redirectorService;
 
-    public RedirectController(RedirectorService redirectorService) {
-        this.redirectorService = redirectorService;
-    }
+  public RedirectController(RedirectorService redirectorService) {
+    this.redirectorService = redirectorService;
+  }
 
-    @GetMapping("/{shortId}")
-    public ResponseEntity<Object> redirect(@PathVariable String shortId,
-                                           HttpServletRequest request) {
-        Optional<String> targetUrl = redirectorService.resolveRedirect(shortId, request.getRemoteAddr(), request.getHeader("User-Agent"));
+  @GetMapping("/{shortId}")
+  public ResponseEntity<Object> redirect(@PathVariable String shortId, HttpServletRequest request) {
+    Optional<String> targetUrl =
+        redirectorService.resolveRedirect(
+            shortId, request.getRemoteAddr(), request.getHeader("User-Agent"));
 
-        return targetUrl.map(url -> ResponseEntity.status(HttpStatus.FOUND)
-                .location(URI.create(url))
-                .build()).orElse(ResponseEntity.notFound().build());
-    }
+    return targetUrl
+        .map(url -> ResponseEntity.status(HttpStatus.FOUND).location(URI.create(url)).build())
+        .orElse(ResponseEntity.notFound().build());
+  }
 }

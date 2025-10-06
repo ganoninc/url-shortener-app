@@ -8,23 +8,23 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-
 @Service
 public class RedirectorServiceImpl implements RedirectorService {
-    private final UrlRepository urlRepository;
-    private final ClickEventProducer clickEventProducer;
+  private final UrlRepository urlRepository;
+  private final ClickEventProducer clickEventProducer;
 
-    public RedirectorServiceImpl(UrlRepository urlRepository, ClickEventProducer clickEventProducer) {
-        this.urlRepository = urlRepository;
-        this.clickEventProducer = clickEventProducer;
-    }
+  public RedirectorServiceImpl(UrlRepository urlRepository, ClickEventProducer clickEventProducer) {
+    this.urlRepository = urlRepository;
+    this.clickEventProducer = clickEventProducer;
+  }
 
-    public Optional<String> resolveRedirect(String shortId, String ip, String userAgent) {
-        Optional<UrlMapping> urlMapping = urlRepository.findByShortId(shortId);
+  public Optional<String> resolveRedirect(String shortId, String ip, String userAgent) {
+    Optional<UrlMapping> urlMapping = urlRepository.findByShortId(shortId);
 
-        return urlMapping.map(mapping -> {
-            clickEventProducer.sendClickEvent(shortId, ip, userAgent);
-            return mapping.getOriginalUrl();
+    return urlMapping.map(
+        mapping -> {
+          clickEventProducer.sendClickEvent(shortId, ip, userAgent);
+          return mapping.getOriginalUrl();
         });
-    }
+  }
 }

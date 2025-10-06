@@ -14,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
 @Getter
 @Setter
 public class AppProperties {
-    @NotBlank
-    @Pattern(regexp = "^https?://([a-zA-Z0-9.-]+)(:\\d+)?$")
-    private String frontendOrigin;
+  @NotBlank
+  @Pattern(regexp = "^https?://([a-zA-Z0-9.-]+)(:\\d+)?$")
+  private String frontendOrigin;
 }

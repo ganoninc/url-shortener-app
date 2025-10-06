@@ -12,20 +12,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 public class UrlRepositoryTest {
-    @Autowired
-    private UrlRepository urlRepository;
+  @Autowired private UrlRepository urlRepository;
 
-    @Test
-    public void itShouldSaveAndFindAllByUserEmail(){
-        UrlMapping urlMapping1 = FakeUrlMapping.builder().build();
-        UrlMapping urlMapping2 = FakeUrlMapping.builder().build();
-        List<UrlMapping> expectedList = List.of(urlMapping1, urlMapping2);
+  @Test
+  public void itShouldSaveAndFindAllByUserEmail() {
+    UrlMapping urlMapping1 = FakeUrlMapping.builder().build();
+    UrlMapping urlMapping2 = FakeUrlMapping.builder().build();
+    List<UrlMapping> expectedList = List.of(urlMapping1, urlMapping2);
 
-        urlRepository.save(urlMapping1);
-        urlRepository.save(urlMapping2);
+    urlRepository.save(urlMapping1);
+    urlRepository.save(urlMapping2);
 
-        List<UrlMapping> foundUrlMappings = urlRepository.findAllByUserEmail(urlMapping1.getUserEmail());
+    List<UrlMapping> foundUrlMappings =
+        urlRepository.findAllByUserEmail(urlMapping1.getUserEmail());
 
-        assertEquals(expectedList, foundUrlMappings);
-    }
+    assertEquals(expectedList, foundUrlMappings);
+  }
 }

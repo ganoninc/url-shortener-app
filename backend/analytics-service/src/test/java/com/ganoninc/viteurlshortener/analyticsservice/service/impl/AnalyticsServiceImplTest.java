@@ -18,57 +18,55 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class AnalyticsServiceImplTest {
 
-    private final String wrongShortId = "wrongShortId";
+  private final String wrongShortId = "wrongShortId";
 
-    @InjectMocks
-    AnalyticsServiceImpl analyticsServiceImpl;
+  @InjectMocks AnalyticsServiceImpl analyticsServiceImpl;
 
-    @Mock
-    private ClickRepository clickRepository;
+  @Mock private ClickRepository clickRepository;
 
-    @Test
-    public void itShouldGetClickCountOfShortId(){
-        List<ClickEvent> listOfEvents = FakeClickEvent.getListOfFakeClickEvent();
-        String shortId = listOfEvents.get(0).getShortId();
-        when(clickRepository.findByShortId(shortId)).thenReturn(listOfEvents);
+  @Test
+  public void itShouldGetClickCountOfShortId() {
+    List<ClickEvent> listOfEvents = FakeClickEvent.getListOfFakeClickEvent();
+    String shortId = listOfEvents.get(0).getShortId();
+    when(clickRepository.findByShortId(shortId)).thenReturn(listOfEvents);
 
-        long clickCount = analyticsServiceImpl.getClickCount(shortId);
+    long clickCount = analyticsServiceImpl.getClickCount(shortId);
 
-        assertEquals(listOfEvents.size(), clickCount);
-        verify(clickRepository, times(1)).findByShortId(shortId);
-    }
+    assertEquals(listOfEvents.size(), clickCount);
+    verify(clickRepository, times(1)).findByShortId(shortId);
+  }
 
-    @Test
-    public void itShouldReturnAListOfClickEventOfShortId(){
-        List<ClickEvent> listOfEvents = FakeClickEvent.getListOfFakeClickEvent();
-        String shortId = listOfEvents.get(0).getShortId();
-        when(clickRepository.findByShortId(shortId)).thenReturn(listOfEvents);
+  @Test
+  public void itShouldReturnAListOfClickEventOfShortId() {
+    List<ClickEvent> listOfEvents = FakeClickEvent.getListOfFakeClickEvent();
+    String shortId = listOfEvents.get(0).getShortId();
+    when(clickRepository.findByShortId(shortId)).thenReturn(listOfEvents);
 
-        List<ClickEvent> clickEvents = analyticsServiceImpl.getAllEvents(shortId);
+    List<ClickEvent> clickEvents = analyticsServiceImpl.getAllEvents(shortId);
 
-        assertEquals(listOfEvents.size(), clickEvents.size());
-        verify(clickRepository, times(1)).findByShortId(shortId);
-    }
+    assertEquals(listOfEvents.size(), clickEvents.size());
+    verify(clickRepository, times(1)).findByShortId(shortId);
+  }
 
-    @Test
-    public void itShouldReturnAClickCountOfZeroWhenItsCalledWithAWrongShortId(){
-        List<ClickEvent> listOfEvents = new ArrayList<>();
-        when(clickRepository.findByShortId(wrongShortId)).thenReturn(listOfEvents);
+  @Test
+  public void itShouldReturnAClickCountOfZeroWhenItsCalledWithAWrongShortId() {
+    List<ClickEvent> listOfEvents = new ArrayList<>();
+    when(clickRepository.findByShortId(wrongShortId)).thenReturn(listOfEvents);
 
-        long clickCount = analyticsServiceImpl.getClickCount(wrongShortId);
+    long clickCount = analyticsServiceImpl.getClickCount(wrongShortId);
 
-        verify(clickRepository, times(1)).findByShortId(wrongShortId);
-        assertEquals(0, clickCount);
-    }
+    verify(clickRepository, times(1)).findByShortId(wrongShortId);
+    assertEquals(0, clickCount);
+  }
 
-    @Test
-    public void itShouldReturnAnEmptyListWhenItsCalledWithAWrongShortId(){
-        List<ClickEvent> listOfEvents = new ArrayList<>();
-        when(clickRepository.findByShortId(wrongShortId)).thenReturn(listOfEvents);
+  @Test
+  public void itShouldReturnAnEmptyListWhenItsCalledWithAWrongShortId() {
+    List<ClickEvent> listOfEvents = new ArrayList<>();
+    when(clickRepository.findByShortId(wrongShortId)).thenReturn(listOfEvents);
 
-        List<ClickEvent> clickEvents = analyticsServiceImpl.getAllEvents(wrongShortId);
+    List<ClickEvent> clickEvents = analyticsServiceImpl.getAllEvents(wrongShortId);
 
-        verify(clickRepository, times(1)).findByShortId(wrongShortId);
-        assertEquals(0, clickEvents.size());
-    }
+    verify(clickRepository, times(1)).findByShortId(wrongShortId);
+    assertEquals(0, clickEvents.size());
+  }
 }
