@@ -1,6 +1,6 @@
 import { describe, vi } from "vitest";
 import { setupStore, type AppStore } from "../../redux/store";
-import { logout } from "../../redux/authSlice";
+import { logoutDueToUserAction } from "../../redux/authSlice";
 import { renderWithProviders } from "../../utils/test-utils";
 import LogoutPage from "./LogoutPage";
 import { fakeAuthenticatedAuthState } from "../../redux/fakes";
@@ -30,7 +30,7 @@ describe("LogoutPage", () => {
     vi.clearAllMocks();
   });
 
-  it("dispatches a logout action on mount", () => {
+  it("dispatches logoutDueToUserAction on mount", () => {
     const store = setupStore({
       auth: fakeAuthenticatedAuthState,
     });
@@ -39,7 +39,7 @@ describe("LogoutPage", () => {
     renderWithProviders(<LogoutPage />, { store });
 
     expect(store.dispatch).toHaveBeenCalledTimes(1);
-    expect(store.dispatch).toHaveBeenCalledWith(logout());
+    expect(store.dispatch).toHaveBeenCalledWith(logoutDueToUserAction());
   });
 
   it("redirects to ROUTES.home on mount", () => {

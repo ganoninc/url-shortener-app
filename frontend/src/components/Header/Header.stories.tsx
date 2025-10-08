@@ -38,7 +38,7 @@ export const UserLoggedOut: Story = {};
 export const UserLoggedIn: Story = {
   parameters: {
     preloadedState: {
-      auth: { jwt: "fake-jwt-token", email: "test@test.com" },
+      auth: { accessToken: "access-token", email: "test@test.com" },
     },
   },
 };

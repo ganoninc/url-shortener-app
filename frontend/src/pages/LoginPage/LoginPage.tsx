@@ -25,7 +25,7 @@ export default function LoginPage() {
         dispatch(
           setCredentials({
             status: "authenticated",
-            jwt: token,
+            accessToken: token,
             user: { email },
           })
         );

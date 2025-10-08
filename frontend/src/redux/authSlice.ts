@@ -7,12 +7,13 @@ type User = {
 
 export type AuthenticatedAuthState = {
   status: "authenticated";
-  jwt: string;
+  accessToken: string;
   user: User;
 };
 
 type UnauthenticatedAuthState = {
   status: "unauthenticated";
+  reason?: "expiredRefreshToken" | "userLogout";
 };
 
 export type AuthState = UnauthenticatedAuthState | AuthenticatedAuthState;
@@ -28,15 +29,28 @@ const authSlice = createSlice({
     setCredentials: (_state, action: PayloadAction<AuthenticatedAuthState>) => {
       return {
         status: "authenticated",
-        jwt: action.payload.jwt,
+        accessToken: action.payload.accessToken,
         user: action.payload.user,
       };
     },
-    logout: () => initialState,
+    logoutDueToUserAction: () =>
+      ({
+        ...initialState,
+        reason: "userLogout",
+      } as UnauthenticatedAuthState),
+    logoutDueToExpiredAccessToken: () =>
+      ({
+        ...initialState,
+        reason: "expiredRefreshToken",
+      } as UnauthenticatedAuthState),
   },
 });
 
-export const { setCredentials, logout } = authSlice.actions;
+export const {
+  setCredentials,
+  logoutDueToUserAction,
+  logoutDueToExpiredAccessToken,
+} = authSlice.actions;
 export const selectUser = (state: RootState) => {
   if (state.auth.status === "authenticated") {
     return state.auth.user;
@@ -46,7 +60,7 @@ export const selectUser = (state: RootState) => {
 };
 export const selectJwt = (state: RootState) => {
   if (state.auth.status === "authenticated") {
-    return state.auth.jwt;
+    return state.auth.accessToken;
   }
 
   return null;

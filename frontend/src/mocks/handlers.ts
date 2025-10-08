@@ -20,4 +20,7 @@ export const handlers = [
 
     return HttpResponse.json<UserUrlDTO>(fakeUserUrlReponse(shortId));
   }),
+  http.get(`${apiGatewayUrl}/auth/refresh-access-token`, () => {
+    return HttpResponse.text("new-access-token");
+  }),
 ];

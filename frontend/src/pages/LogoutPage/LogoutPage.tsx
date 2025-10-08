@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../hooks/hooks";
-import { logout } from "../../redux/authSlice";
+import { logoutDueToUserAction } from "../../redux/authSlice";
 import { useEffect } from "react";
 
 export default function LogoutPage() {
@@ -8,7 +8,7 @@ export default function LogoutPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(logout());
+    dispatch(logoutDueToUserAction());
     navigate("/");
   }, [dispatch, navigate]);
 

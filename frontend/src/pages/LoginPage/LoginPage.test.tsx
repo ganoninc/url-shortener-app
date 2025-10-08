@@ -6,7 +6,7 @@ import { renderWithProviders } from "../../utils/test-utils";
 import { setupStore } from "../../redux/store";
 import { apiGatewayUrl } from "../../config/apiGateway";
 
-const jwtToken = "fake-jwt-token";
+const accessToken = "access-token";
 const userEmail = "user@test.com";
 
 describe("LoginPage", () => {
@@ -51,7 +51,7 @@ describe("LoginPage", () => {
     fireEvent.click(screen.getByRole("button", { name: /login with google/i }));
     window.dispatchEvent(
       new MessageEvent("message", {
-        data: { token: jwtToken, email: userEmail },
+        data: { token: accessToken, email: userEmail },
         origin: apiGatewayUrl,
       })
     );
@@ -60,7 +60,7 @@ describe("LoginPage", () => {
     expect(store.dispatch).toHaveBeenCalledWith(
       setCredentials({
         status: "authenticated",
-        jwt: jwtToken,
+        accessToken: accessToken,
         user: { email: userEmail },
       })
     );
@@ -74,7 +74,7 @@ describe("LoginPage", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /login with google/i }));
     const messageEvent = new MessageEvent("message", {
-      data: { token: jwtToken, email: userEmail },
+      data: { token: accessToken, email: userEmail },
       origin: apiGatewayUrl,
     });
     window.dispatchEvent(messageEvent);
