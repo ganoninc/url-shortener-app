@@ -106,7 +106,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
   }
 
   public String generateRawToken() {
-    byte[] randomBytes = new byte[64];
+    byte[] randomBytes = new byte[53];
     new SecureRandom().nextBytes(randomBytes);
     return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
   }
