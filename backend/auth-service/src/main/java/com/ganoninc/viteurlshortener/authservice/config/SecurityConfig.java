@@ -18,6 +18,8 @@ public class SecurityConfig {
             auth ->
                 auth.requestMatchers("/refresh-access-token")
                     .permitAll()
+                    .requestMatchers("/actuator", "/actuator/**")
+                    .permitAll()
                     .anyRequest()
                     .authenticated())
         .oauth2Login(oauth -> oauth.defaultSuccessUrl("/oauth-callback", true));

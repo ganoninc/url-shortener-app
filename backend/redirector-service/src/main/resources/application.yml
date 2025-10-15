@@ -11,8 +11,25 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    open-in-view: false
   kafka:
     bootstrap-servers: ${KAFKA_URL}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+management:
+  server:
+    port: ${MANAGEMENT_SERVER_PORT}
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  info:
+    build:
+      enabled: true
+    git:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always

@@ -39,3 +39,19 @@ jwt:
 
 app:
   frontend-origin: ${FRONTEND_ORIGIN}
+
+management:
+  server:
+    port: ${MANAGEMENT_SERVER_PORT}
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+  info:
+    build:
+      enabled: true
+    git:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
