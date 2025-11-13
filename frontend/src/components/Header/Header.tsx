@@ -2,9 +2,11 @@ import { NavLink } from "react-router-dom";
 import styles from "./Header.module.css";
 import { useLoggedIn } from "../../hooks/useLoggedIn";
 import { ROUTES } from "../../routePaths";
+import { useUser } from "../../hooks/useUser";
 
 export default function Header() {
   const isLoggedIn = useLoggedIn();
+  const user = useUser();
 
   return (
     <div className={styles.navbar}>
@@ -68,7 +70,7 @@ export default function Header() {
             to={ROUTES.logout}
             end
           >
-            Logout
+            Logout ({user?.email})
           </NavLink>
         )}
       </nav>
