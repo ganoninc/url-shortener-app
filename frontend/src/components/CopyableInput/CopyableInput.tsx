@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useId } from "react";
 import styles from "./CopyableInput.module.css";
 import Button from "../Button/Button";
 
@@ -14,6 +14,7 @@ export default function CopyableInput({
   hideCopyButton = false,
 }: CopyableInputProps) {
   const textInputRef = useRef<HTMLInputElement>(null);
+  const inputName = useId();
 
   function handleClick() {
     if (textInputRef.current) {
@@ -37,6 +38,7 @@ export default function CopyableInput({
         ref={textInputRef}
         value={value}
         disabled={true}
+        name={inputName}
       />
       {!hideCopyButton ? (
         <Button label={"Copy to clipboard"} onClick={handleClick} />
