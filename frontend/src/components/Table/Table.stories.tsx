@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import Table from "./Table";
 import { fakeUserUrlListResonse } from "../../mocks/fakes";
 import Button from "../Button/Button";
-import { action } from "storybook/internal/actions";
+import { action } from "storybook/actions";
 
 const meta: Meta<typeof Table> = {
   title: "Components/Table",
