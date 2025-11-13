@@ -1,7 +1,7 @@
 jwt:
   secret: "test-secret-key-which-should-be-32-bytes"
   expirationMs: 3600000
-  refreshExpirationMs: 86400000
+  refreshTokenExpirationMs: 86400000
 
 spring:
   security:

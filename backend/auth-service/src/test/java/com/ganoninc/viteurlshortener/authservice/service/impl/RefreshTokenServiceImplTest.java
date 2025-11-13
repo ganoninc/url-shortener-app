@@ -28,7 +28,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 public class RefreshTokenServiceImplTest {
-  private final long refreshTokenDurationMs = 3600000;
+  private final long refreshTokenExpirationMs = 3600000;
   private final String userEmail = "test@example.com";
   @Mock private RefreshTokenRepository refreshTokenRepository;
   @Mock private PasswordEncoder passwordEncoder;
@@ -38,7 +38,7 @@ public class RefreshTokenServiceImplTest {
   @BeforeEach
   public void setUp() {
     ReflectionTestUtils.setField(
-        refreshTokenService, "refreshTokenDurationMs", refreshTokenDurationMs);
+        refreshTokenService, "refreshTokenExpirationMs", refreshTokenExpirationMs);
   }
 
   @Test
@@ -63,8 +63,8 @@ public class RefreshTokenServiceImplTest {
     Instant now = Instant.now();
     assertThat(saved.getExpiresAt())
         .isBetween(
-            now.plusMillis(refreshTokenDurationMs - 1000),
-            now.plusMillis(refreshTokenDurationMs + 1000));
+            now.plusMillis(refreshTokenExpirationMs - 1000),
+            now.plusMillis(refreshTokenExpirationMs + 1000));
   }
 
   @Test

@@ -23,8 +23,8 @@ public class AuthController {
   private final RefreshTokenService refreshTokenService;
   private final String refreshTokenCookieName = "refresh-token";
 
-  @Value("${jwt.refreshExpirationMs}")
-  private Integer refreshTokenDurationInMs;
+  @Value("${jwt.refreshTokenExpirationMs}")
+  private Integer refreshTokenExpirationInMs;
 
   public AuthController(
       JwtUtils jwtUtils, AppProperties appProperties, RefreshTokenService refreshTokenService) {
@@ -46,7 +46,7 @@ public class AuthController {
             .sameSite("Strict")
             .secure(true)
             .path("/")
-            .maxAge(refreshTokenDurationInMs)
+            .maxAge(refreshTokenExpirationInMs)
             .build();
     response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
@@ -69,7 +69,7 @@ public class AuthController {
               .sameSite("Strict")
               .secure(true)
               .path("/")
-              .maxAge(refreshTokenDurationInMs)
+              .maxAge(refreshTokenExpirationInMs)
               .build();
 
       response.addHeader("Set-Cookie", refreshTokenCookie.toString());

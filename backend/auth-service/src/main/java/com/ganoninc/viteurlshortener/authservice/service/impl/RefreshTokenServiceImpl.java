@@ -23,8 +23,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
   private final PasswordEncoder encoder;
   private final RefreshTokenRepository refreshTokenRepository;
 
-  @Value("${jwt.refreshExpirationMs}")
-  private Long refreshTokenDurationMs;
+  @Value("${jwt.refreshTokenExpirationMs}")
+  private Long refreshTokenExpirationMs;
 
   public RefreshTokenServiceImpl(
       RefreshTokenRepository refreshTokenRepository, PasswordEncoder encoder, JwtUtils jwtUtils) {
@@ -43,7 +43,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         RefreshTokenMapping.builder()
             .id(tokenId)
             .createdAt(Instant.now())
-            .expiresAt(Instant.now().plusMillis(refreshTokenDurationMs))
+            .expiresAt(Instant.now().plusMillis(refreshTokenExpirationMs))
             .userEmail(userEmail)
             .tokenHash(tokenHash)
             .build();

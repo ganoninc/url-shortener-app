@@ -32,10 +32,8 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
-  #  15 minutes
-  expirationMs: 900000
-  #  24 hours
-  refreshExpirationMs: 86400000
+  expirationMs: ${JWT_EXPIRATION_MS}
+  refreshTokenExpirationMs: ${JWT_REFRESH_TOKEN_EXPIRATION_MS}
 
 app:
   frontend-origin: ${FRONTEND_ORIGIN}

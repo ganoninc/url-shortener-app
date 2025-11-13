@@ -37,28 +37,22 @@ const createClient = (store: Store<RootState>) => {
         originalRequest._retry = true;
         const { auth } = store.getState();
 
-        if (auth.status === "unauthenticated") {
-          store.dispatch(logoutDueToExpiredAccessToken());
-          return Promise.reject(
-            "Cannot refresh access token: user is not authenticated."
-          );
-        }
+        if (auth.status !== "unauthenticated") {
+          try {
+            const newAccessToken = await refreshAccessToken();
 
-        try {
-          const newAccessToken = await refreshAccessToken();
-          store.dispatch(
-            setCredentials({
-              ...auth,
-              accessToken: newAccessToken,
-            })
-          );
+            store.dispatch(
+              setCredentials({
+                ...auth,
+                accessToken: newAccessToken,
+              })
+            );
 
-          error.config.headers.Authorization = `Bearer ${newAccessToken}`;
-
-          return client(originalRequest);
-        } catch (refreshTokenError) {
-          store.dispatch(logoutDueToExpiredAccessToken());
-          return Promise.reject(refreshTokenError);
+            return client(originalRequest);
+          } catch (refreshTokenError) {
+            store.dispatch(logoutDueToExpiredAccessToken());
+            return Promise.reject(refreshTokenError);
+          }
         }
       } else {
         return Promise.reject(error);
