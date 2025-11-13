@@ -1,3 +1,4 @@
+import { Toaster } from "react-hot-toast";
 import styles from "./Layout.module.css";
 
 export type LayoutProps = {
@@ -12,6 +13,7 @@ export default function Layout({ header, body, footer }: LayoutProps) {
       <header className={styles.headerContainer}>{header}</header>
       <main className={styles.bodyContainer}>{body}</main>
       <footer className={styles.footerContainer}>{footer}</footer>
+      <Toaster toastOptions={{ duration: 2500 }} />
     </div>
   );
 }

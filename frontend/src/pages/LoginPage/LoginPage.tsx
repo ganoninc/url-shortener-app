@@ -6,6 +6,7 @@ import Page from "../../components/Page/Page";
 import { fakeAuthenticatedAuthState } from "../../redux/fakes";
 import { isMSWEnabled } from "../../config/msw";
 import { apiGatewayUrl } from "../../config/apiGateway";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -29,6 +30,7 @@ export default function LoginPage() {
             user: { email },
           })
         );
+        toast.success(`Welcome (back), ${email}!`);
       }
 
       window.removeEventListener("message", receiveMessage);
