@@ -52,6 +52,12 @@ export default function NewShortUrlPage() {
     dispatch(updateOriginalUrl({ originalUrl: url.trim() }));
   }
 
+  function handleUrlInputEnterPress() {
+    if (isOriginalUrlValid) {
+      handleUrlSubmit();
+    }
+  }
+
   function handleUrlSubmit() {
     if (!isLoggedIn) {
       window.alert("You must log in before shortening a URL.");
@@ -90,8 +96,10 @@ export default function NewShortUrlPage() {
           name="original-url"
           value={originalUrl}
           onChange={handleUrlInputChange}
+          onEnterPress={handleUrlInputEnterPress}
           placeholder="Enter your link here"
           validationState={UrlInputState}
+          autocomplete={false}
           isDisabled={pageState.status === "loading"}
         />
       </div>
