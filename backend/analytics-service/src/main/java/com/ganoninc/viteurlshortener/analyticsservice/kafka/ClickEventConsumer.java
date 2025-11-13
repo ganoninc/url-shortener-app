@@ -20,7 +20,7 @@ public class ClickEventConsumer {
     this.clickRepository = clickRepository;
   }
 
-  @KafkaListener(topics = "url_clicked", groupId = "analytics-group")
+  @KafkaListener(containerFactory = "kafkaListenerContainerFactory", topics = "url_clicked", groupId = "analytics-group")
   public void handleUrlClickedMessage(String message) {
     try {
       JSONObject messageAsJson = new JSONObject(message);
