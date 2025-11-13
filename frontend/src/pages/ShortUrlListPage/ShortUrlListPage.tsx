@@ -30,13 +30,17 @@ export default function ShortUrlListPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isMounted = true;
+
     urlService
       .getUserUrls()
       .then((res) => {
-        setPageState({
-          status: "loaded",
-          shortUrls: res.data,
-        });
+        if (isMounted) {
+          setPageState({
+            status: "loaded",
+            shortUrls: res.data,
+          });
+        }
       })
       .catch((reason) => {
         setPageState({
@@ -44,6 +48,10 @@ export default function ShortUrlListPage() {
           errorMessage: reason.message,
         });
       });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (

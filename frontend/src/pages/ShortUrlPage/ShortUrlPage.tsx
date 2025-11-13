@@ -44,16 +44,20 @@ export default function ShortUrlPage({
       return;
     }
 
+    let isMounted = true;
+
     urlService
       .getUserUrl(shortId as string)
       .then((res) => {
-        setPageState({
-          status: "loaded",
-          urlDetails: {
-            originalUrl: res.data.originalUrl,
-            createdAt: res.data.createdAt,
-          },
-        });
+        if (isMounted) {
+          setPageState({
+            status: "loaded",
+            urlDetails: {
+              originalUrl: res.data.originalUrl,
+              createdAt: res.data.createdAt,
+            },
+          });
+        }
       })
       .catch((reason) => {
         setPageState({
@@ -61,6 +65,10 @@ export default function ShortUrlPage({
           errorMessage: reason.message,
         });
       });
+
+    return () => {
+      isMounted = false;
+    };
   }, [shortId]);
 
   return (

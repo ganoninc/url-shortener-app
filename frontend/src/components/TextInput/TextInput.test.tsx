@@ -11,6 +11,7 @@ describe("TextInput", () => {
     render(
       <TextInput
         value={testValue}
+        name="text-input"
         onChange={onChangeHandler}
         validationState="normal"
       />

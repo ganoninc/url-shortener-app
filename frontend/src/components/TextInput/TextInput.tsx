@@ -5,6 +5,7 @@ export type TextInputState = "normal" | "valid" | "error";
 
 type TextInputProps = {
   value: string;
+  name: string;
   placeholder?: string;
   onChange: (newValue: string) => void;
   isDisabled?: boolean;
@@ -13,6 +14,7 @@ type TextInputProps = {
 
 export default function TextInput({
   value,
+  name,
   placeholder = "",
   onChange,
   isDisabled = false,
@@ -25,6 +27,7 @@ export default function TextInput({
   return (
     <div className={styles.container}>
       <input
+        name={name}
         type="text"
         value={value}
         placeholder={placeholder}

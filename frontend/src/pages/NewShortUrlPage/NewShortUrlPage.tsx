@@ -87,6 +87,7 @@ export default function NewShortUrlPage() {
       <Text content="Make your links shorter and get a QR code in one click."></Text>
       <div className={styles.originalUrlInputContainer}>
         <TextInput
+          name="original-url"
           value={originalUrl}
           onChange={handleUrlInputChange}
           placeholder="Enter your link here"

@@ -8,6 +8,7 @@ const meta: Meta<typeof TextInput> = {
   tags: ["autodocs"],
   args: {
     value: "Dura lex, sed lex",
+    name: "text-input",
     placeholder: "This is placeholder",
     onChange: action("onChange"),
     isDisabled: false,
