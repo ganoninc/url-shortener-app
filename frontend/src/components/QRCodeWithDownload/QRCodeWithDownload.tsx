@@ -2,6 +2,7 @@ import QRCode from "react-qr-code";
 import styles from "./QRCodeWithDownload.module.css";
 import { useRef } from "react";
 import Button from "../Button/Button";
+import toast from "react-hot-toast";
 
 type QRCodeWithDownloadProps = {
   value: string;
@@ -28,6 +29,8 @@ export default function QRCodeWithDownload({ value }: QRCodeWithDownloadProps) {
 
     document.body.removeChild(downloadLink);
     URL.revokeObjectURL(url);
+
+    toast.success("QR code downloaded!");
   }
 
   return (

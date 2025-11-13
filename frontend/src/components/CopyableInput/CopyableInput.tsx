@@ -1,6 +1,7 @@
 import { useRef, useId } from "react";
 import styles from "./CopyableInput.module.css";
 import Button from "../Button/Button";
+import toast from "react-hot-toast";
 
 type CopyableInputProps = {
   value: string;
@@ -21,7 +22,7 @@ export default function CopyableInput({
       textInputRef.current.select();
       textInputRef.current.setSelectionRange(0, 99999);
       navigator.clipboard.writeText(textInputRef.current.value);
-      window.alert("The URL has been copied to your clipboard");
+      toast.success("URL copied!");
     }
   }
 
