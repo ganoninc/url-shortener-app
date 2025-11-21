@@ -1,0 +1,12 @@
+.gitignore
+.npmignore
+api.ts
+base.ts
+common.ts
+configuration.ts
+docs/AnalyticsControllerApi.md
+docs/ClickEventDTO.md
+docs/PaginatedSliceClickEventDTOString.md
+docs/ShortUrlClickEventsDTO.md
+git_push.sh
+index.ts

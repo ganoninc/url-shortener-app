@@ -11,7 +11,8 @@
     "test": "vitest",
     "storybook": "storybook dev -p 6006 --disable-telemetry",
     "build-storybook": "storybook build",
-    "gen:url-service": "openapi-generator-cli generate -g typescript-axios -o src/api/url/generated -i http://localhost:8082/v3/api-docs --additional-properties=supportsES6=true,skipFormModel=false"
+    "gen:url-service": "openapi-generator-cli generate -g typescript-axios -o src/api/url/generated -i http://localhost:8082/v3/api-docs --additional-properties=supportsES6=true,skipFormModel=false",
+    "gen:analytics-service": "openapi-generator-cli generate -g typescript-axios -o src/api/analytics/generated -i http://localhost:8083/v3/api-docs --additional-properties=supportsES6=true,skipFormModel=false"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
