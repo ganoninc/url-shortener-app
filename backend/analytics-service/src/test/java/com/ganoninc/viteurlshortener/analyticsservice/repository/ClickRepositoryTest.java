@@ -1,12 +1,13 @@
 package com.ganoninc.viteurlshortener.analyticsservice.repository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.ganoninc.viteurlshortener.analyticsservice.model.ClickEvent;
 import com.ganoninc.viteurlshortener.analyticsservice.util.FakeClickEvent;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.springframework.data.domain.Pageable;
 
 @DataJpaTest
 public class ClickRepositoryTest {
@@ -18,7 +19,7 @@ public class ClickRepositoryTest {
     ClickEvent clickEvent = FakeClickEvent.getFakeClickEvent();
     clickRepository.save(clickEvent);
 
-    ClickEvent foundClickEvent = clickRepository.findByShortId(clickEvent.getShortId()).get(0);
+    ClickEvent foundClickEvent = clickRepository.findByShortIdOrderByIdAsc(clickEvent.getShortId(), Pageable.unpaged()).get(0);
     assertEquals(clickEvent.getShortId(), foundClickEvent.getShortId());
   }
 }

@@ -1,72 +1,111 @@
 package com.ganoninc.viteurlshortener.analyticsservice.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import com.ganoninc.viteurlshortener.analyticsservice.model.ClickEvent;
 import com.ganoninc.viteurlshortener.analyticsservice.repository.ClickRepository;
+import com.ganoninc.viteurlshortener.analyticsservice.service.PaginatedClickEvents;
 import com.ganoninc.viteurlshortener.analyticsservice.util.FakeClickEvent;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 public class AnalyticsServiceImplTest {
 
+  private final String shortId = "shortId";
   private final String wrongShortId = "wrongShortId";
 
   @InjectMocks AnalyticsServiceImpl analyticsServiceImpl;
-
-  @Mock private ClickRepository clickRepository;
+  @Mock ClickRepository clickRepository;
 
   @Test
   public void itShouldGetClickCountOfShortId() {
-    List<ClickEvent> listOfEvents = FakeClickEvent.getListOfFakeClickEvent();
-    String shortId = listOfEvents.get(0).getShortId();
-    when(clickRepository.findByShortId(shortId)).thenReturn(listOfEvents);
+    List<ClickEvent> events = FakeClickEvent.getListOfFakeClickEvent();
+    when(clickRepository.countByShortId(shortId)).thenReturn((long) events.size());
 
     long clickCount = analyticsServiceImpl.getClickCount(shortId);
 
-    assertEquals(listOfEvents.size(), clickCount);
-    verify(clickRepository, times(1)).findByShortId(shortId);
+    assertEquals(events.size(), clickCount);
+    verify(clickRepository).countByShortId(shortId);
   }
 
   @Test
-  public void itShouldReturnAListOfClickEventOfShortId() {
-    List<ClickEvent> listOfEvents = FakeClickEvent.getListOfFakeClickEvent();
-    String shortId = listOfEvents.get(0).getShortId();
-    when(clickRepository.findByShortId(shortId)).thenReturn(listOfEvents);
+  public void itShouldReturnAllClickEventsWhenRowCountIsLessThanSize() {
+    List<ClickEvent> events = FakeClickEvent.getListOfFakeClickEvent();
+    when(clickRepository.findByShortIdOrderByIdAsc(eq(shortId), any(Pageable.class)))
+        .thenReturn(events);
+    when(clickRepository.countByShortId(shortId)).thenReturn((long) events.size());
 
-    List<ClickEvent> clickEvents = analyticsServiceImpl.getAllEvents(shortId);
+    PaginatedClickEvents paginatedClickEvents =
+        analyticsServiceImpl.getClickEvents(shortId, null, 50);
 
-    assertEquals(listOfEvents.size(), clickEvents.size());
-    verify(clickRepository, times(1)).findByShortId(shortId);
+    assertEquals(events.size(), paginatedClickEvents.events().items().size());
+    assertEquals(events.size(), paginatedClickEvents.totalClicks());
+    verify(clickRepository).findByShortIdOrderByIdAsc(eq(shortId), any(Pageable.class));
   }
 
   @Test
-  public void itShouldReturnAClickCountOfZeroWhenItsCalledWithAWrongShortId() {
-    List<ClickEvent> listOfEvents = new ArrayList<>();
-    when(clickRepository.findByShortId(wrongShortId)).thenReturn(listOfEvents);
+  public void itShouldReturnANextCursorWhenRowCountIsMoreThanSize() {
+    List<ClickEvent> events = FakeClickEvent.getListOfFakeClickEvent();
+    int pageSize = 5;
+    when(clickRepository.findByShortIdOrderByIdAsc(eq(shortId), any(Pageable.class)))
+        .thenReturn(events);
+    when(clickRepository.countByShortId(shortId)).thenReturn((long) events.size());
 
-    long clickCount = analyticsServiceImpl.getClickCount(wrongShortId);
+    PaginatedClickEvents paginatedClickEvents =
+        analyticsServiceImpl.getClickEvents(shortId, null, pageSize);
 
-    verify(clickRepository, times(1)).findByShortId(wrongShortId);
-    assertEquals(0, clickCount);
+    assertNotNull(paginatedClickEvents.events().nextCursor());
+    assertEquals(events.get(pageSize - 1).getId(), paginatedClickEvents.events().nextCursor());
   }
 
   @Test
-  public void itShouldReturnAnEmptyListWhenItsCalledWithAWrongShortId() {
-    List<ClickEvent> listOfEvents = new ArrayList<>();
-    when(clickRepository.findByShortId(wrongShortId)).thenReturn(listOfEvents);
+  public void itShouldReturnASliceOfEventsStartingAfterCursor() {
+    int pageSize = 5;
+    List<ClickEvent> events = FakeClickEvent.getListOfFakeClickEvent();
+    Collections.reverse(events);
 
-    List<ClickEvent> clickEvents = analyticsServiceImpl.getAllEvents(wrongShortId);
+    long cursor = events.get(pageSize - 1).getId();
+    List<ClickEvent> eventsAfterCursor = events.stream().filter(e -> e.getId() < cursor).toList();
 
-    verify(clickRepository, times(1)).findByShortId(wrongShortId);
-    assertEquals(0, clickEvents.size());
+    when(clickRepository.findAfterCursorByShortId(eq(shortId), eq(cursor), any(Pageable.class)))
+        .thenReturn(eventsAfterCursor);
+    when(clickRepository.countByShortId(shortId)).thenReturn((long) events.size());
+
+    PaginatedClickEvents paginatedClickEvents =
+        analyticsServiceImpl.getClickEvents(shortId, cursor, pageSize);
+
+    assertTrue(cursor > paginatedClickEvents.events().items().get(0).id());
+    verify(clickRepository).findAfterCursorByShortId(eq(shortId), eq(cursor), any(Pageable.class));
+  }
+
+  @Test
+  public void itShouldReturnZeroClickCountForWrongShortId() {
+    when(clickRepository.countByShortId(wrongShortId)).thenReturn(0L);
+
+    long count = analyticsServiceImpl.getClickCount(wrongShortId);
+
+    assertEquals(0, count);
+    verify(clickRepository).countByShortId(wrongShortId);
+  }
+
+  @Test
+  public void itShouldReturnZeroEventsForWrongShortId() {
+    when(clickRepository.findByShortIdOrderByIdAsc(eq(wrongShortId), any(Pageable.class)))
+        .thenReturn(List.of());
+
+    PaginatedClickEvents paginatedClickEvents =
+        analyticsServiceImpl.getClickEvents(wrongShortId, null, 50);
+
+    assertEquals(0, paginatedClickEvents.events().items().size());
+    assertEquals(0, paginatedClickEvents.totalClicks());
+    verify(clickRepository).findByShortIdOrderByIdAsc(eq(wrongShortId), any(Pageable.class));
   }
 }
