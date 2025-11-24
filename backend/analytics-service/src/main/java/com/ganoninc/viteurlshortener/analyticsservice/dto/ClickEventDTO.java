@@ -20,9 +20,18 @@ public record ClickEventDTO(
             description = "User agent string of the requester",
             requiredMode = Schema.RequiredMode.REQUIRED,
             example = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)")
-        String userAgent) {
+        String userAgent,
+    @Schema(
+            description =
+                "ISO country code resolved from the requester's IP address. '-E' indicates that the country could not be determined.",
+            requiredMode = Schema.RequiredMode.REQUIRED,
+            example = "FR")
+        String countryCode) {
   public static ClickEventDTO from(ClickEventView clickEventView) {
     return new ClickEventDTO(
-        clickEventView.id(), clickEventView.timestamp(), clickEventView.userAgent());
+        clickEventView.id(),
+        clickEventView.timestamp(),
+        clickEventView.userAgent(),
+        clickEventView.countryCode());
   }
 }

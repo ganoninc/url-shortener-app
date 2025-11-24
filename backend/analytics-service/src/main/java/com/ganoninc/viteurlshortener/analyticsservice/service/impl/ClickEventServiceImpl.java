@@ -30,7 +30,7 @@ public class ClickEventServiceImpl implements ClickEventService {
         .getCountryOfIp(ip)
         .thenAccept(
             country -> {
-              clickEvent.setCountry(country);
+              clickEvent.setCountryCode(country);
               clickRepository.save(clickEvent);
             });
   }

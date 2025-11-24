@@ -47,6 +47,12 @@ export interface ClickEventDTO {
      * @memberof ClickEventDTO
      */
     'userAgent': string;
+    /**
+     * ISO country code resolved from the requester\'s IP address. \'-E\' indicates that the country could not be determined.
+     * @type {string}
+     * @memberof ClickEventDTO
+     */
+    'countryCode': string;
 }
 /**
  * Cursor-paginated window of click events for this short URL. This list contains only the events included in the current slice, ordered from newest to oldest. The number of items is limited by the requested page size. Use nextCursor in the PaginatedSlice to retrieve the following window of events. 

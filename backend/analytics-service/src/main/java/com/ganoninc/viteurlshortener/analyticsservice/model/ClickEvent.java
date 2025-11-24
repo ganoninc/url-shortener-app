@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(indexes = {@Index(columnList = "shortId, country")})
+@Table(indexes = {@Index(columnList = "shortId, countryCode")})
 public class ClickEvent {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,5 +22,5 @@ public class ClickEvent {
   private String userAgent;
 
   @Column(length = 2)
-  private String country;
+  private String countryCode;
 }

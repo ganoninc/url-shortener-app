@@ -42,6 +42,6 @@ public class ClickEventServiceImplTest {
 
     ClickEvent savedClickEvent = captor.getValue();
     assertEquals(shortId, savedClickEvent.getShortId());
-    assertEquals(countryIsoCode, savedClickEvent.getCountry());
+    assertEquals(countryIsoCode, savedClickEvent.getCountryCode());
   }
 }
