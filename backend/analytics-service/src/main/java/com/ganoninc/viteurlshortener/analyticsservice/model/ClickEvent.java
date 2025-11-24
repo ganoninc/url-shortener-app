@@ -1,12 +1,8 @@
 package com.ganoninc.viteurlshortener.analyticsservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.*;
-
+import jakarta.persistence.*;
 import java.time.Instant;
+import lombok.*;
 
 @Getter
 @Setter
@@ -14,6 +10,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(indexes = {@Index(columnList = "shortId, country")})
 public class ClickEvent {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +20,7 @@ public class ClickEvent {
   private Instant timestamp;
   private String ip;
   private String userAgent;
+
+  @Column(length = 2)
+  private String country;
 }
