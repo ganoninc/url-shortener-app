@@ -1,13 +1,20 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { configDefaults } from "vitest/config";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  css: {
+    modules: {
+      localsConvention: "camelCaseOnly",
+    },
+    devSourcemap: true,
+  },
   test: {
-    globals: true,
     environment: "jsdom",
-    exclude: [...configDefaults.exclude],
+    globals: true,
+    setupFiles: ["./vitest.setup.ts"],
+    include: ["**/*.test.{ts,tsx}"],
   },
 });

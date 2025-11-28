@@ -6,7 +6,7 @@ import { vi } from "vitest";
 import { updateOriginalUrl } from "../../redux/newShortUrlSlice";
 import TextInputStyles from "../../components/TextInput/TextInput.module.css";
 
-import { beforeAll, afterEach, afterAll } from "vitest";
+import { afterEach } from "vitest";
 import { server } from "../../mocks/node";
 import { ROUTES } from "../../routePaths";
 import { fakeShortenURLResponse } from "../../mocks/fakes";
@@ -27,14 +27,9 @@ vi.mock("react-router-dom", async () => {
 window.alert = vi.fn();
 
 describe("NewShortUrlPage", () => {
-  beforeAll(() => server.listen());
-
   afterEach(() => {
-    server.resetHandlers();
     vi.clearAllMocks();
   });
-
-  afterAll(() => server.close());
 
   it("dispatches updateOriginalUrl action when original URL input has a new value", () => {
     const store = setupStore({
