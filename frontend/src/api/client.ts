@@ -8,6 +8,7 @@ import {
   logoutDueToExpiredAccessToken,
   setCredentials,
 } from "../redux/authSlice";
+import { AnalyticsControllerApi } from "./analytics/generated";
 
 const createClient = (store: Store<RootState>) => {
   const client = axios.create({
@@ -68,5 +69,11 @@ const apiClient = createClient(store);
 export const urlService = new UrlControllerApi(
   undefined,
   apiGatewayUrl + "/url",
+  apiClient
+);
+
+export const analyticsService = new AnalyticsControllerApi(
+  undefined,
+  apiGatewayUrl + "/analytics",
   apiClient
 );

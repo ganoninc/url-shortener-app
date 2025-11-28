@@ -65,7 +65,7 @@ export interface PaginatedSliceClickEventDTOString {
      * @type {Array<ClickEventDTO>}
      * @memberof PaginatedSliceClickEventDTOString
      */
-    'items'?: Array<ClickEventDTO>;
+    'items': Array<ClickEventDTO>;
     /**
      * Cursor pointing to the next slice. Null when no additional items are available. Clients should pass this cursor to retrieve the following page. 
      * @type {string}

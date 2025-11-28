@@ -10,7 +10,8 @@ public record PaginatedSlice<T, S>(
         Items returned in this cursor slice. This list represents only a window
         of the full dataset, limited by the requested page size, and ordered
         consistently according to the API’s contract.
-        """)
+        """,
+            requiredMode = Schema.RequiredMode.REQUIRED)
         List<T> items,
     @Schema(
             description =
