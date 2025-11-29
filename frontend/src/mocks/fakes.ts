@@ -52,7 +52,7 @@ const USER_AGENT_POOL = [
 
 const pick = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
 
-const fakeClickEvent = (
+export const fakeClickEvent = (
   id?: number,
   timestamp?: string,
   userAgent?: string,
