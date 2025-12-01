@@ -37,6 +37,7 @@ export default function QRCodeWithDownload({ value }: QRCodeWithDownloadProps) {
     <div className={styles.container}>
       <QRCode
         role="img"
+        aria-label="QR Code"
         ref={svgRef}
         size={256}
         value={value}

@@ -38,8 +38,8 @@ export default function CopyableInput({
         className={styles.textInput}
         ref={textInputRef}
         value={value}
-        disabled={true}
         name={inputName}
+        readOnly={true}
       />
       {!hideCopyButton ? (
         <Button label={"Copy to clipboard"} onClick={handleClick} />
