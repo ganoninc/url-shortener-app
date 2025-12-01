@@ -17,6 +17,8 @@ export default function Table<TH extends readonly string[]>({
         gap: "1em",
         alignItems: "center",
       }}
+      role="grid"
+      aria-readonly="true"
     >
       {headers.map((header, index) => (
         <div key={`header-${index}`} className={styles.header}>

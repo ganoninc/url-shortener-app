@@ -23,7 +23,7 @@ export function useClickEvents(shortId: string) {
   });
 
   const abortControllerRef = useRef<AbortController | null>(null);
-  const pageSize = 25;
+  const pageSize = 10;
 
   const loadEvents = useCallback(
     (nextCursor?: string) => {

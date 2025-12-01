@@ -50,6 +50,9 @@ describe("ShortUrlPage", () => {
 
       const qrCodeImg = screen.getByRole("img");
       expect(qrCodeImg).toBeInTheDocument();
+
+      const clickEventsTable = screen.getByRole("grid");
+      expect(clickEventsTable).toBeInTheDocument();
     });
   });
 
@@ -64,6 +67,9 @@ describe("ShortUrlPage", () => {
 
       const qrCodeImg = screen.getByRole("img");
       expect(qrCodeImg).toBeInTheDocument();
+
+      const clickEventsTable = screen.queryByRole("grid");
+      expect(clickEventsTable).toBeNull();
     });
   });
 

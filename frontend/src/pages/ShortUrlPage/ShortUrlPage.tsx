@@ -13,6 +13,8 @@ import Button from "../../components/Button/Button";
 import moment from "moment";
 import Confetti from "react-confetti-boom";
 import { ROUTES } from "../../routePaths";
+import ClickEventsTable from "../../components/ClickEventsTable/ClickEventsTable";
+import { useClickEvents } from "../../hooks/useClickEvents";
 
 type ShortUrlPageProps = {
   newShortUrl?: boolean;
@@ -34,16 +36,19 @@ export default function ShortUrlPage({
   const [pageState, setPageState] = useState<ShortUrlPageState>({
     status: "loading",
   });
-  const { shortId } = useParams();
+  const { shortId } = useParams() as { shortId: string };
   const navigate = useNavigate();
+  const {
+    clickEvents,
+    totalClicks,
+    isLoading: isClickEventsLoading,
+    hasMore: hasMoreClickEvents,
+    errorMessage: clickEventsErrorMessage,
+    loadMore: loadMoreClickEvents,
+  } = useClickEvents(shortId);
   const shortUrl = `${apiGatewayUrl}/${shortId}`;
 
   useEffect(() => {
-    if (!shortId) {
-      setPageState({ status: "error", errorMessage: "Invalid short url id" });
-      return;
-    }
-
     let isMounted = true;
 
     urlService
@@ -60,10 +65,12 @@ export default function ShortUrlPage({
         }
       })
       .catch((reason) => {
-        setPageState({
-          status: "error",
-          errorMessage: reason.message,
-        });
+        if (isMounted) {
+          setPageState({
+            status: "error",
+            errorMessage: reason.message,
+          });
+        }
       });
 
     return () => {
@@ -132,6 +139,20 @@ export default function ShortUrlPage({
               <QRCodeWithDownload value={shortUrl} />
             </div>
           </div>
+
+          {!newShortUrl && (
+            <div className={styles.stats}>
+              <Title content={`Total visits: ${totalClicks}`} level="2"></Title>
+              <Title content="Latest clicks" level="3"></Title>
+              <ClickEventsTable
+                clickEvents={clickEvents}
+                onLoadMore={loadMoreClickEvents}
+                isLoading={isClickEventsLoading}
+                hasMore={hasMoreClickEvents}
+                errorMessage={clickEventsErrorMessage}
+              />
+            </div>
+          )}
 
           {newShortUrl && (
             <div className={styles.suggestedNextActions}>
