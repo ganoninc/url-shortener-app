@@ -20,7 +20,9 @@ spring:
 
 springdoc:
   api-docs:
-    version: openapi_3_0
+    enabled: false
+  swagger-ui:
+    enabled: false
 
 management:
   server:
