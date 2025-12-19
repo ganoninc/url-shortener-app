@@ -1,6 +1,20 @@
 _format_version: "3.0"
 _transform: true
 
+upstreams:
+  - name: auth-service-upstream
+    targets:
+      - target: ${AUTH_SERVICE_HOST}
+  - name: url-service-upstream
+    targets:
+      - target: ${URL_SERVICE_HOST}
+  - name: analytics-service-upstream
+    targets:
+      - target: ${ANALYTICS_SERVICE_HOST}
+  - name: redirector-service-upstream
+    targets:
+      - target: ${REDIRECTOR_SERVICE_HOST}
+
 consumers:
   - username: "auth-service"
 
@@ -12,7 +26,8 @@ jwt_secrets:
 
 services:
   - name: auth-service
-    url: http://auth-service:8081
+    host: auth-service-upstream
+    port: 8081
     routes:
       - name: auth-route
         paths:
@@ -29,7 +44,8 @@ services:
               max_age: 3600
 
   - name: url-service
-    url: http://url-service:8082
+    host: url-service-upstream
+    port: 8082
     routes:
       - name: url-route
         paths:
@@ -56,8 +72,17 @@ services:
           - name: jwt-claims-headers
             config: {}
 
+  - name: redirector-service
+    host: redirector-service-upstream
+    port: 8083
+    routes:
+      - name: redirector-route
+        expression: http.path ~ "^/[^/]+$"
+        strip_path: false
+
   - name: analytics-service
-    url: http://analytics-service:8083
+    host: analytics-service-upstream
+    port: 8084
     routes:
       - name: analytics-route
         paths:
@@ -71,13 +96,6 @@ services:
               key_claim_name: iss
           - name: jwt-claims-headers
             config: {}
-
-  - name: redirector-service
-    url: http://redirector-service:8083
-    routes:
-      - name: redirector-route
-        expression: http.path ~ "^/[^/]+$"
-        strip_path: false
 
   # - name: httpbin
   #   url: https://httpbin.konghq.com
