@@ -3,7 +3,8 @@ set -e
 
 mkdir -p /tmp/kong-declarative
 
-envsubst < /kong/declarative/kong.yml.template > /tmp/kong-declarative/kong.yml
+envsubst < /kong/declarative/kong.yml.template \
+  > /tmp/kong-declarative/kong.yml
 
 export KONG_DECLARATIVE_CONFIG=/tmp/kong-declarative/kong.yml
 
