@@ -37,4 +37,4 @@ docker buildx build \
   "$SERVICE_DIR"
 
 echo "✅ Pushed:"
-echo "  - ${ECR_URI}:${GIT_SHA}"git 
+echo "  - ${ECR_URI}:${GIT_SHA}" 
