@@ -3,6 +3,10 @@ server:
   forward-headers-strategy: framework
 
 spring:
+  threads:
+    virtual:
+      enabled: true
+
   security:
     oauth2:
       client:
@@ -47,8 +51,6 @@ management:
         include: health, info
   info:
     build:
-      enabled: true
-    git:
       enabled: true
   endpoint:
     health:
