@@ -47,6 +47,7 @@ services:
   auth-service:
     build: ./backend/auth-service
     container_name: auth-service
+    hostname: ${AUTH_SERVICE_HOST}
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
@@ -54,7 +55,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRATION_MS=${JWT_EXPIRATION_MS}
       - JWT_REFRESH_TOKEN_EXPIRATION_MS=${JWT_REFRESH_TOKEN_EXPIRATION_MS}
-      - SERVER_PORT=8081
+      - SERVER_PORT=${AUTH_SERVICE_PORT}
       - DATABASE_USERNAME=${POSTGRESQL_USERNAME}
       - DATABASE_PASSWORD=${POSTGRESQL_PASSWORD}
       - DATABASE_URL=${DATABASE_JDBC_URL}
@@ -65,13 +66,14 @@ services:
   url-service:
     build: ./backend/url-service
     container_name: url-service
+    hostname: ${URL_SERVICE_HOST}
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - KAFKA_URL=kafka:9092
       - DATABASE_USERNAME=${POSTGRESQL_USERNAME}
       - DATABASE_PASSWORD=${POSTGRESQL_PASSWORD}
       - DATABASE_URL=${DATABASE_JDBC_URL}
-      - SERVER_PORT=8082
+      - SERVER_PORT=${URL_SERVICE_PORT}
       - MANAGEMENT_SERVER_PORT=9000
     depends_on:
       - postgres
@@ -81,13 +83,14 @@ services:
   redirector-service:
     build: ./backend/redirector-service
     container_name: redirector-service
+    hostname: ${REDIRECTOR_SERVICE_HOST}
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - KAFKA_URL=kafka:9092
       - DATABASE_USERNAME=${POSTGRESQL_USERNAME}
       - DATABASE_PASSWORD=${POSTGRESQL_PASSWORD}
       - DATABASE_URL=${DATABASE_JDBC_URL}
-      - SERVER_PORT=8083
+      - SERVER_PORT=${REDIRECTOR_SERVICE_PORT}
       - MANAGEMENT_SERVER_PORT=9000
     depends_on:
       - postgres
@@ -97,13 +100,14 @@ services:
   analytics-service:
     build: ./backend/analytics-service
     container_name: analytics-service
+    hostname: ${ANALYTICS_SERVICE_HOST}
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - KAFKA_URL=kafka:9092
       - DATABASE_USERNAME=${POSTGRESQL_USERNAME}
       - DATABASE_PASSWORD=${POSTGRESQL_PASSWORD}
       - DATABASE_URL=${DATABASE_JDBC_URL}
-      - SERVER_PORT=8084
+      - SERVER_PORT=${ANALYTICS_SERVICE_PORT}
       - MANAGEMENT_SERVER_PORT=9000
     depends_on:
       - postgres
@@ -113,30 +117,36 @@ services:
     build: ./backend/api-gateway
     container_name: api-gateway
     ports:
-      - "80:80"
+      - "80:8000"
+      - "8100:8100"
       # - "8001:8001"
       # - "8002:8002"
     environment:
-      KONG_PROXY_LISTEN: 0.0.0.0:80
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
       KONG_ADMIN_LISTEN: 0.0.0.0:8001
       KONG_MANAGER: "on"
       KONG_ROUTER_FLAVOR: "expressions"
+      KONG_STATUS_LISTEN: 0.0.0.0:8100
       KONG_DATABASE: "off"
       KONG_VAULTS: "env"
-      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
       KONG_PLUGINS: bundled,jwt,jwt-claims-headers
       JWT_SECRET: ${JWT_SECRET}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
       KONG_LOG_LEVEL: debug
-    volumes:
-      - ./backend/api-gateway/kong.yml.template:/kong/declarative/kong.yml.template:ro
-      - ./backend/api-gateway/docker-entrypoint.sh:/docker-entrypoint.sh:ro
-    entrypoint: ["/docker-entrypoint.sh"]
-    depends_on:
-      - auth-service
-      - url-service
-      - redirector-service
-      - analytics-service
+      AUTH_SERVICE_HOST: ${AUTH_SERVICE_HOST}
+      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
+      URL_SERVICE_HOST: ${URL_SERVICE_HOST}
+      URL_SERVICE_PORT: ${URL_SERVICE_PORT}
+      REDIRECTOR_SERVICE_HOST: ${REDIRECTOR_SERVICE_HOST}
+      REDIRECTOR_SERVICE_PORT: ${REDIRECTOR_SERVICE_PORT}
+      ANALYTICS_SERVICE_HOST: ${ANALYTICS_SERVICE_HOST}
+      ANALYTICS_SERVICE_PORT: ${ANALYTICS_SERVICE_PORT}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8100/status"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
 volumes:
   pgdata:
