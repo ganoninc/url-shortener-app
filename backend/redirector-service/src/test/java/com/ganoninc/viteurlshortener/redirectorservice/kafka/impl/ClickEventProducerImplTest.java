@@ -1,4 +1,4 @@
-package com.ganoninc.viteurlshortener.redirectorservice.kafka;
+package com.ganoninc.viteurlshortener.redirectorservice.kafka.impl;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,9 +14,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class ClickEventProducerTest {
+public class ClickEventProducerImplTest {
 
-  @InjectMocks private ClickEventProducer clickEventProducer;
+  @InjectMocks private ClickEventProducerImpl clickEventProducerImpl;
 
   @Mock private KafkaTemplate<String, String> kafkaTemplate;
 
@@ -26,13 +26,13 @@ public class ClickEventProducerTest {
     String ip = "192.168.1.1";
     String userAgent = "Mozilla/5.0";
 
-    clickEventProducer.sendClickEvent(shortId, ip, userAgent);
+    clickEventProducerImpl.sendClickEvent(shortId, ip, userAgent);
 
     ArgumentCaptor<String> topicCaptor = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<String> payloadCaptor = ArgumentCaptor.forClass(String.class);
     verify(kafkaTemplate, times(1)).send(topicCaptor.capture(), payloadCaptor.capture());
 
-    assertEquals("url_clicked", topicCaptor.getValue());
+    assertEquals("url-clicked", topicCaptor.getValue());
 
     String payload = payloadCaptor.getValue();
     assertTrue(payload.contains(shortId));

@@ -1,8 +1,6 @@
 package com.ganoninc.viteurlshortener.redirectorservice.controller;
 
-import com.ganoninc.viteurlshortener.redirectorservice.kafka.ClickEventProducer;
 import com.ganoninc.viteurlshortener.redirectorservice.model.UrlMapping;
-import com.ganoninc.viteurlshortener.redirectorservice.repository.UrlRepository;
 import com.ganoninc.viteurlshortener.redirectorservice.service.RedirectorService;
 import com.ganoninc.viteurlshortener.redirectorservice.util.FakeUrlMapping;
 import org.junit.jupiter.api.Test;
