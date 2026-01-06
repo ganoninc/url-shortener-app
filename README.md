@@ -28,6 +28,9 @@ A scalable URL shortener app with real-time click analytics built using:
 - Kafka with KRaft
 - PostgreSQL
 - Docker Compose (local)
+- Terraform files for deploying and managing infrastructure on AWS
+
+> **Note:** Terraform support is provided for AWS deployments.
 
 ---
 
@@ -42,10 +45,9 @@ A scalable URL shortener app with real-time click analytics built using:
 
 ### ✅ Prerequisites
 
-- Java 17+
+- Java 21+
 - Node.js 18+
 - Docker + Docker Compose
-- PostgreSQL client (optional)
 
 ---
 
