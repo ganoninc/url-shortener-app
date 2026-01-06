@@ -1,2 +1,39 @@
 .env
 .DS_Store
+
+# Terraform state
+*.tfstate
+*.tfstate.*
+
+# Terraform working directory
+.terraform/
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Terraform CLI config
+.terraformrc
+terraform.rc
+
+# Variable files (often contain secrets)
+*.tfvars
+*.tfvars.json
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Plan files
+*.tfplan
+*.plan
+
+# Lock file (ignore ONLY if you intentionally don't want reproducible provider versions)
+# .terraform.lock.hcl
+
+# IDE / OS noise
+.idea/
+.vscode/
+.DS_Store
