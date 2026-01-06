@@ -20,8 +20,8 @@ public class ClickEventConsumer {
 
   @KafkaListener(
       containerFactory = "kafkaListenerContainerFactory",
-      topics = "url_clicked",
-      groupId = "analytics-group")
+      topics = "url-clicked",
+      groupId = "analytics-service-group")
   public void handleUrlClickedMessage(String message) {
     try {
       JSONObject messageAsJson = new JSONObject(message);

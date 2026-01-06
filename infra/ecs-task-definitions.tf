@@ -339,7 +339,7 @@ resource "aws_ecs_task_definition" "analytics_service" {
   container_definitions = jsonencode([
     {
       name  = "analytics-service"
-      image = "${aws_ecr_repository.analytics_service.repository_url}:7951d71"
+      image = "${aws_ecr_repository.analytics_service.repository_url}:519596f"
 
       cpu       = 256
       memory    = 512
