@@ -6,7 +6,6 @@ spring:
   threads:
     virtual:
       enabled: true
-
   security:
     oauth2:
       client:
@@ -16,14 +15,12 @@ spring:
             client-secret: ${GOOGLE_CLIENT_SECRET}
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope: profile, email
-
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
-
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
