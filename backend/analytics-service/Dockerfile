@@ -1,7 +1,23 @@
-FROM eclipse-temurin:17-jdk
+FROM eclipse-temurin:21-jdk-alpine AS builder
+WORKDIR /app
+COPY . .
+RUN ./mvnw clean package -DskipTests
 
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-COPY target/analytics-service.jar app.jar
+RUN apk add --no-cache curl
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Security: Don't run as root in AWS environment
+RUN addgroup -S spring && adduser -S spring -G spring
+USER spring:spring
+
+COPY --from=builder /app/target/analytics-service.jar app.jar
+
+# JVM Tuning for Cost Efficiency
+ENTRYPOINT ["java", \
+    "-XX:+UseContainerSupport", \
+    "-XX:MaxRAMPercentage=75.0", \
+    "-XX:+UseSerialGC", \
+    "-Xss512k", \
+    "-jar", "app.jar"]
