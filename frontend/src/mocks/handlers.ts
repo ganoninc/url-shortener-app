@@ -11,6 +11,10 @@ import { apiGatewayUrl } from "../config/apiGateway";
 
 export const handlers = [
   http.all("*", async () => await delay()),
+  // auth-service
+  http.get(`${apiGatewayUrl}/auth/refresh-access-token`, () => {
+    return HttpResponse.text("new-access-token");
+  }),
   // url-services
   http.post(`${apiGatewayUrl}/url/shorten`, () => {
     return HttpResponse.json<ShortenURLResponseDTO>(fakeShortenURLResponse);
@@ -37,8 +41,4 @@ export const handlers = [
       );
     }
   ),
-  // auth-service
-  http.get(`${apiGatewayUrl}/auth/refresh-access-token`, () => {
-    return HttpResponse.text("new-access-token");
-  }),
 ];

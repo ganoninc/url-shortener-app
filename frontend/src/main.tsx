@@ -15,14 +15,21 @@ async function enableMocking() {
   }
 
   const { worker } = await import("./mocks/browser.ts");
-  return worker.start();
+  return worker.start({
+    serviceWorker: {
+      url: `${import.meta.env.BASE_URL}/mockServiceWorker.js`,
+      options: {
+        scope: "/",
+      },
+    },
+  });
 }
 
 enableMocking().then(() => {
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
       <ErrorBoundary FallbackComponent={ErrorBoudaryFallbackView}>
-        <BrowserRouter>
+        <BrowserRouter basename={`${import.meta.env.BASE_URL}`}>
           <Provider store={store}>
             <App />
           </Provider>
