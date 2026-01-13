@@ -1,0 +1,7 @@
+spring:
+  kafka:
+    properties:
+      security.protocol: ${KAFKA_SECURITY_PROTOCOL}
+      sasl.mechanism: ${KAFKA_SASL_MECHANISM}
+      sasl.jaas.config: ${KAFKA_JAAS_CONFIG}
+      sasl.client.callback.handler.class: ${KAFKA_CALLBACK_HANDLER}

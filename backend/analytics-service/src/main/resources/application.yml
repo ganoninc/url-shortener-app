@@ -18,10 +18,7 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_URL}
     properties:
-      security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
-      sasl.mechanism: ${KAFKA_SASL_MECHANISM:NONE}
-      sasl.jaas.config: ${KAFKA_JAAS_CONFIG:null}
-      sasl.client.callback.handler.class: ${KAFKA_CALLBACK_HANDLER:null}
+      security.protocol: PLAINTEXT
     listener:
       missing-topics-fatal: false
     consumer:

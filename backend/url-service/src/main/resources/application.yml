@@ -18,10 +18,7 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA_URL}
     properties:
-      security.protocol: ${KAFKA_SECURITY_PROTOCOL:PLAINTEXT}
-      sasl.mechanism: ${KAFKA_SASL_MECHANISM:NONE}
-      sasl.jaas.config: ${KAFKA_JAAS_CONFIG:null}
-      sasl.client.callback.handler.class: ${KAFKA_CALLBACK_HANDLER:null}
+      security.protocol: PLAINTEXT
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -45,3 +42,9 @@ management:
   endpoint:
     health:
       show-details: always
+
+kafka:
+  topic:
+    creation:
+      partition-count: ${KAFKA_TOPIC_CREATION_PARTITION_COUNT}
+      replica-count: ${KAFKA_TOPIC_CREATION_REPLICA_COUNT}
