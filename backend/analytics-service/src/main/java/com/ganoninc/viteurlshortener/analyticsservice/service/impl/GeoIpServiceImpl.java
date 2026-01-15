@@ -17,7 +17,11 @@ public class GeoIpServiceImpl implements GeoIpService {
   @Async
   @Override
   public CompletableFuture<String> getCountryOfIp(String ip) {
-    return CompletableFuture.supplyAsync(() -> geoIpCacheService.fetchCountry(ip))
+    return CompletableFuture.supplyAsync(
+            () -> {
+              String country = geoIpCacheService.fetchCountry(ip);
+              return country.equalsIgnoreCase("undefined") ? null : country;
+            })
         .exceptionally(e -> "-E");
   }
 }

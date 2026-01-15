@@ -10,10 +10,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class GeoIpCacheServiceImpl implements GeoIpCacheService {
   private final WebClient webClient;
 
-  public GeoIpCacheServiceImpl() {
-    this(WebClient.builder().baseUrl("https://ipapi.co/").build());
-  }
-
   public GeoIpCacheServiceImpl(WebClient webClient) {
     this.webClient = webClient;
   }
@@ -22,7 +18,7 @@ public class GeoIpCacheServiceImpl implements GeoIpCacheService {
   public String fetchCountry(String ip) {
     return webClient
         .get()
-        .uri(ip + "/country")
+        .uri("https://ipapi.co/" + ip + "/country")
         .retrieve()
         .bodyToMono(String.class)
         .block(Duration.ofSeconds(5));

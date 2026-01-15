@@ -40,7 +40,7 @@ public class GeoIpCacheServiceImplTest {
     String IPAddress = "1.2.3.4";
 
     when(webClient.get()).thenReturn(uriSpec);
-    when(uriSpec.uri(IPAddress + "/country")).thenReturn(headersSpec);
+    when(uriSpec.uri("https://ipapi.co/" + IPAddress + "/country")).thenReturn(headersSpec);
     when(headersSpec.retrieve()).thenReturn(responseSpec);
 
     when(responseSpec.bodyToMono(String.class)).thenReturn(Mono.just(countryIsoCode));
@@ -50,7 +50,7 @@ public class GeoIpCacheServiceImplTest {
     assertEquals(countryIsoCode, result);
 
     verify(webClient).get();
-    verify(uriSpec).uri(IPAddress + "/country");
+    verify(uriSpec).uri("https://ipapi.co/" + IPAddress + "/country");
     verify(headersSpec).retrieve();
     verify(responseSpec).bodyToMono(String.class);
   }
