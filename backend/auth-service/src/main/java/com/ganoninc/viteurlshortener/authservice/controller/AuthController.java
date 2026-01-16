@@ -2,8 +2,11 @@ package com.ganoninc.viteurlshortener.authservice.controller;
 
 import com.ganoninc.viteurlshortener.authservice.config.AppProperties;
 import com.ganoninc.viteurlshortener.authservice.dto.TokenPairDto;
+import com.ganoninc.viteurlshortener.authservice.service.AuthService;
 import com.ganoninc.viteurlshortener.authservice.service.RefreshTokenService;
 import com.ganoninc.viteurlshortener.authservice.utils.JwtUtils;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.trace.Tracer;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
@@ -18,27 +21,25 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AuthController {
 
-  private final JwtUtils jwtUtils;
+  private final AuthService authService;
   private final AppProperties appProperties;
-  private final RefreshTokenService refreshTokenService;
   private final String refreshTokenCookieName = "refresh-token";
 
   @Value("${jwt.refreshTokenExpirationMs}")
   private Integer refreshTokenExpirationInMs;
 
-  public AuthController(
-      JwtUtils jwtUtils, AppProperties appProperties, RefreshTokenService refreshTokenService) {
-    this.jwtUtils = jwtUtils;
+  public AuthController(AuthService authService, AppProperties appProperties) {
+    this.authService = authService;
     this.appProperties = appProperties;
-    this.refreshTokenService = refreshTokenService;
   }
 
   @GetMapping("/oauth-callback")
   public String handleOAuthCallback(
       Model model, @AuthenticationPrincipal OAuth2User user, HttpServletResponse response) {
     String email = user.getAttribute("email");
-    String token = jwtUtils.generateToken(email);
-    String refreshToken = refreshTokenService.createRefreshToken(email);
+
+    String accessToken = authService.generateAccessToken(email);
+    String refreshToken = authService.createRefreshToken(email);
 
     ResponseCookie refreshTokenCookie =
         ResponseCookie.from(refreshTokenCookieName, refreshToken)
@@ -50,7 +51,7 @@ public class AuthController {
             .build();
     response.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
-    model.addAttribute("token", token);
+    model.addAttribute("token", accessToken);
     model.addAttribute("email", email);
     model.addAttribute("frontendOrigin", appProperties.getFrontendOrigin());
 
@@ -61,7 +62,7 @@ public class AuthController {
   public ResponseEntity<Object> handleRefreshAccessToken(
       @CookieValue(refreshTokenCookieName) String refreshToken, HttpServletResponse response) {
     try {
-      TokenPairDto tokenPair = refreshTokenService.validateAndRotateTokens(refreshToken);
+      TokenPairDto tokenPair = authService.validateAndRotateTokens(refreshToken);
 
       ResponseCookie refreshTokenCookie =
           ResponseCookie.from(refreshTokenCookieName, tokenPair.refreshToken())

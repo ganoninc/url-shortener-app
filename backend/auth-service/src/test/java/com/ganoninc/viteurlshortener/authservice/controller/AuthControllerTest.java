@@ -8,6 +8,7 @@ import com.ganoninc.viteurlshortener.authservice.config.AppProperties;
 import com.ganoninc.viteurlshortener.authservice.config.SecurityConfig;
 import com.ganoninc.viteurlshortener.authservice.dto.TokenPairDto;
 import com.ganoninc.viteurlshortener.authservice.exception.RefreshTokenInvalidException;
+import com.ganoninc.viteurlshortener.authservice.service.AuthService;
 import com.ganoninc.viteurlshortener.authservice.service.RefreshTokenService;
 import com.ganoninc.viteurlshortener.authservice.utils.JwtUtils;
 import jakarta.servlet.http.Cookie;
@@ -30,9 +31,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 public class AuthControllerTest {
 
   @Autowired private MockMvc mvc;
-  @MockitoBean private JwtUtils jwtUtils;
+  @MockitoBean private AuthService authService;
   @MockitoBean private AppProperties appProperties;
-  @MockitoBean private RefreshTokenService refreshTokenService;
 
   @Test
   public void itShouldReturnOauthCallbackViewWithModelAttributesAndARefreshTokenCookie()
@@ -42,9 +42,9 @@ public class AuthControllerTest {
     String refreshToken = "refresh.token";
     String frontendOrigin = "http://localhost:8080";
 
-    when(jwtUtils.generateToken(email)).thenReturn(token);
+    when(authService.generateAccessToken(email)).thenReturn(token);
     when(appProperties.getFrontendOrigin()).thenReturn(frontendOrigin);
-    when(refreshTokenService.createRefreshToken(email)).thenReturn(refreshToken);
+    when(authService.createRefreshToken(email)).thenReturn(refreshToken);
 
     OAuth2User oAuth2User =
         new DefaultOAuth2User(
@@ -61,7 +61,8 @@ public class AuthControllerTest {
         .andExpect(cookie().exists("refresh-token"))
         .andExpect(cookie().value("refresh-token", refreshToken));
 
-    verify(jwtUtils).generateToken(email);
+    verify(authService).generateAccessToken(email);
+    verify(authService).createRefreshToken(email);
     verify(appProperties).getFrontendOrigin();
   }
 
@@ -78,7 +79,7 @@ public class AuthControllerTest {
     String newRefreshToken = "new-refresh-token";
     String newAccessToken = "new-access-token";
 
-    when(refreshTokenService.validateAndRotateTokens(oldRefreshToken))
+    when(authService.validateAndRotateTokens(oldRefreshToken))
         .thenReturn(new TokenPairDto(newAccessToken, newRefreshToken));
 
     mvc.perform(
@@ -93,14 +94,14 @@ public class AuthControllerTest {
                 .stringValues("Set-Cookie", Matchers.hasItem(Matchers.containsString("HttpOnly"))))
         .andExpect(header().string("Set-Cookie", Matchers.containsString("SameSite=Strict")));
 
-    verify(refreshTokenService, times(1)).validateAndRotateTokens(oldRefreshToken);
+    verify(authService, times(1)).validateAndRotateTokens(oldRefreshToken);
   }
 
   @Test
   public void itShouldReturnBadRequestOnException() throws Exception {
     String oldRefreshToken = "old-refresh-token";
 
-    when(refreshTokenService.validateAndRotateTokens(oldRefreshToken))
+    when(authService.validateAndRotateTokens(oldRefreshToken))
         .thenThrow(new RefreshTokenInvalidException("Invalid refresh token"));
 
     mvc.perform(
@@ -109,6 +110,6 @@ public class AuthControllerTest {
         .andExpect(status().isBadRequest())
         .andExpect(content().string("Invalid refresh token"));
 
-    verify(refreshTokenService, times(1)).validateAndRotateTokens(oldRefreshToken);
+    verify(authService, times(1)).validateAndRotateTokens(oldRefreshToken);
   }
 }

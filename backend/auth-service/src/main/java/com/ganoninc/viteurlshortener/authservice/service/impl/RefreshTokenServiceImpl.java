@@ -7,6 +7,9 @@ import com.ganoninc.viteurlshortener.authservice.model.RefreshTokenMapping;
 import com.ganoninc.viteurlshortener.authservice.repository.RefreshTokenRepository;
 import com.ganoninc.viteurlshortener.authservice.service.RefreshTokenService;
 import com.ganoninc.viteurlshortener.authservice.utils.JwtUtils;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.common.AttributeKey;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
@@ -57,6 +60,10 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
   public TokenPairDto validateAndRotateTokens(String rawRefreshToken) {
     String[] parts = rawRefreshToken.split("\\.");
     if (parts.length != 2) {
+      Span.current()
+          .addEvent(
+              "refresh_token_invalid",
+              Attributes.of(AttributeKey.stringKey("reason"), "malformed"));
       throw new RefreshTokenInvalidException("Invalid refresh token");
     }
 
@@ -66,7 +73,15 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     RefreshTokenMapping currentRefreshTokenMapping =
         refreshTokenRepository
             .findByIdForUpdate(tokenId)
-            .orElseThrow(() -> new RefreshTokenNotFoundException("Refresh token not found"));
+            .orElseThrow(
+                () -> {
+                  Span.current()
+                      .addEvent(
+                          "refresh_token_not_found",
+                          Attributes.of(
+                              AttributeKey.stringKey("refresh_token.id"), tokenId.toString()));
+                  return new RefreshTokenNotFoundException("Refresh token not found");
+                });
 
     validateCurrentRefreshToken(currentRefreshTokenMapping, token);
 
@@ -86,20 +101,38 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
             .orElseThrow(() -> new RefreshTokenNotFoundException("New refresh token not found")));
     refreshTokenRepository.save(currentRefreshTokenMapping);
 
+    Span.current()
+        .addEvent(
+            "refresh_token_rotated",
+            Attributes.of(
+                AttributeKey.stringKey("user.email"), currentRefreshTokenMapping.getUserEmail()));
+
     return new TokenPairDto(newJwtAccessToken, newRefreshToken);
   }
 
   private void validateCurrentRefreshToken(
       RefreshTokenMapping currentRefreshTokenMapping, String token) {
-    if (currentRefreshTokenMapping.getExpiresAt().compareTo(Instant.now()) < 0) {
+    if (currentRefreshTokenMapping.getExpiresAt().isBefore(Instant.now())) {
+      Span.current()
+          .addEvent(
+              "refresh_token_expired", Attributes.of(AttributeKey.stringKey("reason"), "expired"));
       throw new RefreshTokenInvalidException("Expired refresh token");
     }
 
     if (!encoder.matches(token, currentRefreshTokenMapping.getTokenHash())) {
+      Span.current()
+          .addEvent(
+              "refresh_token_invalid",
+              Attributes.of(AttributeKey.stringKey("reason"), "hash_mismatch"));
       throw new RefreshTokenInvalidException("Invalid refresh token");
     }
 
     if (currentRefreshTokenMapping.getRevokedAt() != null) {
+      Span.current()
+          .addEvent(
+              "refresh_token_revoked",
+              Attributes.of(
+                  AttributeKey.stringKey("user.email"), currentRefreshTokenMapping.getUserEmail()));
       revokeChain(currentRefreshTokenMapping);
       throw new RefreshTokenInvalidException("Revoked refresh token");
     }

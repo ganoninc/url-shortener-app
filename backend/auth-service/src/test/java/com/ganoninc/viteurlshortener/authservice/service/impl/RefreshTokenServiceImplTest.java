@@ -30,9 +30,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class RefreshTokenServiceImplTest {
   private final long refreshTokenExpirationMs = 3600000;
   private final String userEmail = "test@example.com";
+
   @Mock private RefreshTokenRepository refreshTokenRepository;
   @Mock private PasswordEncoder passwordEncoder;
   @Mock private JwtUtils jwtUtils;
+
   @InjectMocks private RefreshTokenServiceImpl refreshTokenService;
 
   @BeforeEach
