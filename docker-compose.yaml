@@ -5,6 +5,8 @@ services:
     container_name: kafka
     ports:
       - "9092:9092"
+    volumes:
+      - kafka-data:/var/lib/kafka/data
     environment:
       KAFKA_ENABLE_KRAFT: yes
       KAFKA_PROCESS_ROLES: broker,controller
@@ -19,16 +21,18 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_NUM_PARTITIONS: 1
-      KAFKA_HEAP_OPTS: -Xmx1G -Xms1G
+      KAFKA_HEAP_OPTS: -Xmx512M -Xms256M
 
-  # kafka-ui:
-  #   image: provectuslabs/kafka-ui:latest
-  #   container_name: kafka-ui
-  #   ports:
-  #     - "8080:8080"
-  #   environment:
-  #     KAFKA_CLUSTERS_0_NAME: local
-  #     KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    depends_on:
+      - kafka
 
   # PostgreSQL
   postgres:
@@ -61,6 +65,14 @@ services:
       - DATABASE_URL=${DATABASE_JDBC_URL}
       - FRONTEND_ORIGIN=${FRONTEND_ORIGIN}
       - MANAGEMENT_SERVER_PORT=9000
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=auth-service
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+    depends_on:
+      - postgres
+      - otel-collector
 
   # URL Service
   url-service:
@@ -75,9 +87,17 @@ services:
       - DATABASE_URL=${DATABASE_JDBC_URL}
       - SERVER_PORT=${URL_SERVICE_PORT}
       - MANAGEMENT_SERVER_PORT=9000
+      - KAFKA_TOPIC_CREATION_PARTITION_COUNT=1
+      - KAFKA_TOPIC_CREATION_REPLICA_COUNT=1
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=url-service
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
     depends_on:
       - postgres
       - kafka
+      - otel-collector
 
   # Redirector Service
   redirector-service:
@@ -92,9 +112,17 @@ services:
       - DATABASE_URL=${DATABASE_JDBC_URL}
       - SERVER_PORT=${REDIRECTOR_SERVICE_PORT}
       - MANAGEMENT_SERVER_PORT=9000
+      - KAFKA_TOPIC_CREATION_PARTITION_COUNT=1
+      - KAFKA_TOPIC_CREATION_REPLICA_COUNT=1
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=redirector-service
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
     depends_on:
       - postgres
       - kafka
+      - otel-collector
 
   # Analytics Service
   analytics-service:
@@ -109,15 +137,21 @@ services:
       - DATABASE_URL=${DATABASE_JDBC_URL}
       - SERVER_PORT=${ANALYTICS_SERVICE_PORT}
       - MANAGEMENT_SERVER_PORT=9000
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=analytics-service
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
     depends_on:
       - postgres
       - kafka
+      - otel-collector
 
   api-gateway:
     build: ./backend/api-gateway
     container_name: api-gateway
     ports:
-      - "80:8000"
+      - "8000:8000"
       - "8100:8100"
       # - "8001:8001"
       # - "8002:8002"
@@ -133,6 +167,11 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
       KONG_LOG_LEVEL: debug
+      KONG_TRUSTED_IPS: 0.0.0.0/0
+      KONG_REAL_IP_HEADER: "X-Forwarded-For"
+      KONG_REAL_IP_RECURSIVE: "on"
+      KONG_TRACING_INSTRUMENTATIONS: all
+      KONG_TRACING_SAMPLING_RATE: 1.0
       AUTH_SERVICE_HOST: ${AUTH_SERVICE_HOST}
       AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
       URL_SERVICE_HOST: ${URL_SERVICE_HOST}
@@ -147,6 +186,28 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
+    depends_on:
+      - otel-collector
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    container_name: otel-collector
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol-contrib/config.yaml
+    command: ["--config=/etc/otelcol-contrib/config.yaml"]
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    depends_on:
+      - otel-collector
 
 volumes:
   pgdata:
+  kafka-data:

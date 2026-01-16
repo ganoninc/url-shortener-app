@@ -1,6 +1,15 @@
 _format_version: "3.0"
 _transform: true
 
+plugins:
+  - name: opentelemetry
+    config:
+      endpoint: "http://otel-collector:4318/v1/traces"
+      resource_attributes:
+        service.name: "api-gateway"
+      # Optional: if you want to see headers in your traces
+      header_type: "w3c"
+
 upstreams:
   - name: auth-service-upstream
     targets:
@@ -35,6 +44,7 @@ services:
         paths:
           - /auth
         strip_path: true
+        preserve_host: true
         plugins:
           - name: cors
             config:
@@ -52,6 +62,7 @@ services:
         paths:
           - /url
         strip_path: true
+        preserve_host: true
         plugins:
           - name: cors
             config:
@@ -63,7 +74,6 @@ services:
               headers:
                 - authorization
                 - content-type
-              credentials: true
               max_age: 3600
           - name: jwt
             config:
@@ -79,6 +89,7 @@ services:
       - name: redirector-route
         expression: http.path ~ "^/[^/]+$"
         strip_path: false
+        preserve_host: true
 
   - name: analytics-service
     host: analytics-service-upstream
@@ -87,7 +98,17 @@ services:
         paths:
           - /analytics
         strip_path: true
+        preserve_host: true
         plugins:
+          - name: cors
+            config:
+              origins: ${CORS_ALLOWED_ORIGINS}
+              methods:
+                - GET
+                - OPTIONS
+              headers:
+                - authorization
+              max_age: 3600
           - name: jwt
             config:
               claims_to_verify:
