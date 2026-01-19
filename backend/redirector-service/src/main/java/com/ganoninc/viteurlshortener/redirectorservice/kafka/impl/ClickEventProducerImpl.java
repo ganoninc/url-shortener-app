@@ -1,5 +1,9 @@
 package com.ganoninc.viteurlshortener.redirectorservice.kafka.impl;
 
+import static com.ganoninc.viteurlshortener.redirectorservice.tracing.TelemetryAttributes.ERROR_MESSAGE;
+import static com.ganoninc.viteurlshortener.redirectorservice.tracing.TelemetryAttributes.MESSAGING_DESTINATION;
+import static com.ganoninc.viteurlshortener.redirectorservice.tracing.TelemetryAttributes.MESSAGING_SYSTEM;
+
 import com.ganoninc.viteurlshortener.redirectorservice.kafka.ClickEventProducer;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
@@ -37,16 +41,16 @@ public class ClickEventProducerImpl implements ClickEventProducer {
                 currentSpan.addEvent(
                     "kafka.publish.failure",
                     Attributes.of(
-                        AttributeKey.stringKey("messaging.system"), "kafka",
-                        AttributeKey.stringKey("messaging.destination"), "url-clicked",
-                        AttributeKey.stringKey("error.message"), error.getMessage()));
+                        MESSAGING_SYSTEM, "kafka",
+                        MESSAGING_DESTINATION, "url-clicked",
+                        ERROR_MESSAGE, error.getMessage()));
               }
             });
 
     currentSpan.addEvent(
         "kafka.produce",
         Attributes.of(
-            AttributeKey.stringKey("messaging.system"), "kafka",
-            AttributeKey.stringKey("messaging.destination"), "url-clicked"));
+            MESSAGING_SYSTEM, "kafka",
+            MESSAGING_DESTINATION, "url-clicked"));
   }
 }
