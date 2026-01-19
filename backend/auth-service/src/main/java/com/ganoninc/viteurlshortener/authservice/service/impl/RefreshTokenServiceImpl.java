@@ -7,13 +7,16 @@ import com.ganoninc.viteurlshortener.authservice.model.RefreshTokenMapping;
 import com.ganoninc.viteurlshortener.authservice.repository.RefreshTokenRepository;
 import com.ganoninc.viteurlshortener.authservice.service.RefreshTokenService;
 import com.ganoninc.viteurlshortener.authservice.utils.JwtUtils;
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
   private final JwtUtils jwtUtils;
   private final PasswordEncoder encoder;
   private final RefreshTokenRepository refreshTokenRepository;
+  private final Logger logger = LoggerFactory.getLogger(RefreshTokenServiceImpl.class);
 
   @Value("${jwt.refreshTokenExpirationMs}")
   private Long refreshTokenExpirationMs;
@@ -53,43 +57,45 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     refreshTokenRepository.save(refreshTokenMapping);
 
+    Span.current()
+        .addEvent(
+            "refresh_token_created",
+            Attributes.of(AttributeKey.stringKey("auth.refresh_token_id"), tokenId.toString()));
+
     return tokenId + "." + token;
   }
 
+  @WithSpan("auth.refresh_token.validate_and_rotate")
   @Transactional
   public TokenPairDto validateAndRotateTokens(String rawRefreshToken) {
     String[] parts = rawRefreshToken.split("\\.");
     if (parts.length != 2) {
-      Span.current()
-          .addEvent(
-              "refresh_token_invalid",
-              Attributes.of(AttributeKey.stringKey("reason"), "malformed"));
+      String maskedToken =
+          rawRefreshToken.length() > 8
+              ? rawRefreshToken.substring(0, 4)
+                  + "..."
+                  + rawRefreshToken.substring(rawRefreshToken.length() - 4)
+              : "****";
+      logger.error("Invalid refresh token. Validation failed. Token: {}", maskedToken);
       throw new RefreshTokenInvalidException("Invalid refresh token");
     }
 
     UUID tokenId = UUID.fromString(parts[0]);
+    Span.current().setAttribute("auth.refresh_token_id", tokenId.toString());
     String token = parts[1];
 
     RefreshTokenMapping currentRefreshTokenMapping =
         refreshTokenRepository
             .findByIdForUpdate(tokenId)
-            .orElseThrow(
-                () -> {
-                  Span.current()
-                      .addEvent(
-                          "refresh_token_not_found",
-                          Attributes.of(
-                              AttributeKey.stringKey("refresh_token.id"), tokenId.toString()));
-                  return new RefreshTokenNotFoundException("Refresh token not found");
-                });
+            .orElseThrow(() -> new RefreshTokenNotFoundException("Refresh token not found"));
 
     validateCurrentRefreshToken(currentRefreshTokenMapping, token);
 
-    return rovokeCurrentTokenAndCreateNewTokens(currentRefreshTokenMapping);
+    return revokeCurrentTokenAndCreateNewTokens(currentRefreshTokenMapping);
   }
 
   @Transactional
-  protected TokenPairDto rovokeCurrentTokenAndCreateNewTokens(
+  protected TokenPairDto revokeCurrentTokenAndCreateNewTokens(
       RefreshTokenMapping currentRefreshTokenMapping) {
     String newRefreshToken = createRefreshToken(currentRefreshTokenMapping.getUserEmail());
     String newJwtAccessToken = jwtUtils.generateToken(currentRefreshTokenMapping.getUserEmail());
@@ -101,44 +107,29 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
             .orElseThrow(() -> new RefreshTokenNotFoundException("New refresh token not found")));
     refreshTokenRepository.save(currentRefreshTokenMapping);
 
-    Span.current()
-        .addEvent(
-            "refresh_token_rotated",
-            Attributes.of(
-                AttributeKey.stringKey("user.email"), currentRefreshTokenMapping.getUserEmail()));
+    Span.current().addEvent("refresh_token_rotated");
 
     return new TokenPairDto(newJwtAccessToken, newRefreshToken);
   }
 
   private void validateCurrentRefreshToken(
       RefreshTokenMapping currentRefreshTokenMapping, String token) {
+
     if (currentRefreshTokenMapping.getExpiresAt().isBefore(Instant.now())) {
-      Span.current()
-          .addEvent(
-              "refresh_token_expired", Attributes.of(AttributeKey.stringKey("reason"), "expired"));
       throw new RefreshTokenInvalidException("Expired refresh token");
     }
 
     if (!encoder.matches(token, currentRefreshTokenMapping.getTokenHash())) {
-      Span.current()
-          .addEvent(
-              "refresh_token_invalid",
-              Attributes.of(AttributeKey.stringKey("reason"), "hash_mismatch"));
       throw new RefreshTokenInvalidException("Invalid refresh token");
     }
 
     if (currentRefreshTokenMapping.getRevokedAt() != null) {
-      Span.current()
-          .addEvent(
-              "refresh_token_revoked",
-              Attributes.of(
-                  AttributeKey.stringKey("user.email"), currentRefreshTokenMapping.getUserEmail()));
       revokeChain(currentRefreshTokenMapping);
       throw new RefreshTokenInvalidException("Revoked refresh token");
     }
   }
 
-  public String generateRawToken() {
+  private String generateRawToken() {
     byte[] randomBytes = new byte[53];
     new SecureRandom().nextBytes(randomBytes);
     return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
@@ -150,5 +141,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
       refreshTokenRepository.save(mapping);
       mapping = mapping.getReplacement();
     }
+    Span.current().addEvent("refresh_token_chain_revoked");
   }
 }

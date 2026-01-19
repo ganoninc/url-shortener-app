@@ -3,10 +3,7 @@ package com.ganoninc.viteurlshortener.authservice.controller;
 import com.ganoninc.viteurlshortener.authservice.config.AppProperties;
 import com.ganoninc.viteurlshortener.authservice.dto.TokenPairDto;
 import com.ganoninc.viteurlshortener.authservice.service.AuthService;
-import com.ganoninc.viteurlshortener.authservice.service.RefreshTokenService;
-import com.ganoninc.viteurlshortener.authservice.utils.JwtUtils;
-import io.opentelemetry.api.GlobalOpenTelemetry;
-import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.trace.Span;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
@@ -36,6 +33,8 @@ public class AuthController {
   @GetMapping("/oauth-callback")
   public String handleOAuthCallback(
       Model model, @AuthenticationPrincipal OAuth2User user, HttpServletResponse response) {
+    Span.current().setAttribute("auth.flow", "login_oauth");
+
     String email = user.getAttribute("email");
 
     String accessToken = authService.generateAccessToken(email);

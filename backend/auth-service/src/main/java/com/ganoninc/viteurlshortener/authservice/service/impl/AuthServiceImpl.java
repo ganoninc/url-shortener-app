@@ -4,6 +4,7 @@ import com.ganoninc.viteurlshortener.authservice.dto.TokenPairDto;
 import com.ganoninc.viteurlshortener.authservice.service.AuthService;
 import com.ganoninc.viteurlshortener.authservice.service.RefreshTokenService;
 import com.ganoninc.viteurlshortener.authservice.utils.JwtUtils;
+import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ public class AuthServiceImpl implements AuthService {
 
   @WithSpan("auth.validate_and_rotate_tokens")
   public TokenPairDto validateAndRotateTokens(String refreshToken) {
+    Span.current().setAttribute("auth.flow", "refresh");
     return refreshTokenService.validateAndRotateTokens(refreshToken);
   }
 }
