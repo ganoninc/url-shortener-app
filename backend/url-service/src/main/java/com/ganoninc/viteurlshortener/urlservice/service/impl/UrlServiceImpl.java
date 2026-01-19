@@ -1,11 +1,12 @@
 package com.ganoninc.viteurlshortener.urlservice.service.impl;
 
+import static com.ganoninc.viteurlshortener.urlservice.tracing.TelemetryAttributes.URL_MAPPING_ID;
+
 import com.ganoninc.viteurlshortener.urlservice.dto.UserUrlDTO;
 import com.ganoninc.viteurlshortener.urlservice.kafka.UrlCreatedProducer;
 import com.ganoninc.viteurlshortener.urlservice.model.UrlMapping;
 import com.ganoninc.viteurlshortener.urlservice.repository.UrlRepository;
 import com.ganoninc.viteurlshortener.urlservice.service.UrlService;
-import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.instrumentation.annotations.SpanAttribute;
@@ -39,9 +40,7 @@ public class UrlServiceImpl implements UrlService {
     urlMapping.setUserEmail(userEmail);
 
     UrlMapping savedEntity = urlRepository.save(urlMapping);
-    currentSpan.addEvent(
-        "url.mapping.created",
-        Attributes.of(AttributeKey.longKey("url.mapping.id"), savedEntity.getId()));
+    currentSpan.addEvent("url.mapping.created", Attributes.of(URL_MAPPING_ID, savedEntity.getId()));
 
     urlCreatedProducer.sendUrlCreated(savedEntity);
 

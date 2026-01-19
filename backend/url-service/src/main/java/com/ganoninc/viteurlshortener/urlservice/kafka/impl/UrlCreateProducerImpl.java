@@ -1,8 +1,11 @@
 package com.ganoninc.viteurlshortener.urlservice.kafka.impl;
 
+import static com.ganoninc.viteurlshortener.urlservice.tracing.TelemetryAttributes.ERROR_MESSAGE;
+import static com.ganoninc.viteurlshortener.urlservice.tracing.TelemetryAttributes.MESSAGING_DESTINATION;
+import static com.ganoninc.viteurlshortener.urlservice.tracing.TelemetryAttributes.MESSAGING_SYSTEM;
+
 import com.ganoninc.viteurlshortener.urlservice.kafka.UrlCreatedProducer;
 import com.ganoninc.viteurlshortener.urlservice.model.UrlMapping;
-import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
 import org.json.JSONObject;
@@ -37,16 +40,17 @@ public class UrlCreateProducerImpl implements UrlCreatedProducer {
                 currentSpan.addEvent(
                     "kafka.publish.failure",
                     Attributes.of(
-                        AttributeKey.stringKey("messaging.system"), "kafka",
-                        AttributeKey.stringKey("messaging.destination"), "url-created",
-                        AttributeKey.stringKey("error.message"), error.getMessage()));
+                        MESSAGING_SYSTEM,
+                        "kafka",
+                        MESSAGING_DESTINATION,
+                        "url-created",
+                        ERROR_MESSAGE,
+                        error.getMessage()));
               }
             });
 
     currentSpan.addEvent(
         "kafka.produce",
-        Attributes.of(
-            AttributeKey.stringKey("messaging.system"), "kafka",
-            AttributeKey.stringKey("messaging.destination"), "url-created"));
+        Attributes.of(MESSAGING_SYSTEM, "kafka", MESSAGING_DESTINATION, "url-created"));
   }
 }
