@@ -16,5 +16,5 @@ public interface ClickRepository extends JpaRepository<ClickEvent, Long> {
   List<ClickEvent> findAfterCursorByShortId(
       @Param("shortId") String shortId, @Param("cursor") Long cursor, Pageable pageable);
 
-  List<ClickEvent> findByShortIdOrderByIdAsc(String shortId, Pageable pageable);
+  List<ClickEvent> findByShortIdOrderByIdDesc(String shortId, Pageable pageable);
 }

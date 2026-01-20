@@ -39,7 +39,7 @@ public class AnalyticsServiceImplTest {
   @Test
   public void itShouldReturnAllClickEventsWhenRowCountIsLessThanSize() {
     List<ClickEvent> events = FakeClickEvent.getListOfFakeClickEvent();
-    when(clickRepository.findByShortIdOrderByIdAsc(eq(shortId), any(Pageable.class)))
+    when(clickRepository.findByShortIdOrderByIdDesc(eq(shortId), any(Pageable.class)))
         .thenReturn(events);
     when(clickRepository.countByShortId(shortId)).thenReturn((long) events.size());
 
@@ -48,14 +48,14 @@ public class AnalyticsServiceImplTest {
 
     assertEquals(events.size(), paginatedClickEvents.events().items().size());
     assertEquals(events.size(), paginatedClickEvents.totalClicks());
-    verify(clickRepository).findByShortIdOrderByIdAsc(eq(shortId), any(Pageable.class));
+    verify(clickRepository).findByShortIdOrderByIdDesc(eq(shortId), any(Pageable.class));
   }
 
   @Test
   public void itShouldReturnANextCursorWhenRowCountIsMoreThanSize() {
     List<ClickEvent> events = FakeClickEvent.getListOfFakeClickEvent();
     int pageSize = 5;
-    when(clickRepository.findByShortIdOrderByIdAsc(eq(shortId), any(Pageable.class)))
+    when(clickRepository.findByShortIdOrderByIdDesc(eq(shortId), any(Pageable.class)))
         .thenReturn(events);
     when(clickRepository.countByShortId(shortId)).thenReturn((long) events.size());
 
@@ -98,7 +98,7 @@ public class AnalyticsServiceImplTest {
 
   @Test
   public void itShouldReturnZeroEventsForWrongShortId() {
-    when(clickRepository.findByShortIdOrderByIdAsc(eq(wrongShortId), any(Pageable.class)))
+    when(clickRepository.findByShortIdOrderByIdDesc(eq(wrongShortId), any(Pageable.class)))
         .thenReturn(List.of());
 
     PaginatedClickEvents paginatedClickEvents =
@@ -106,6 +106,6 @@ public class AnalyticsServiceImplTest {
 
     assertEquals(0, paginatedClickEvents.events().items().size());
     assertEquals(0, paginatedClickEvents.totalClicks());
-    verify(clickRepository).findByShortIdOrderByIdAsc(eq(wrongShortId), any(Pageable.class));
+    verify(clickRepository).findByShortIdOrderByIdDesc(eq(wrongShortId), any(Pageable.class));
   }
 }

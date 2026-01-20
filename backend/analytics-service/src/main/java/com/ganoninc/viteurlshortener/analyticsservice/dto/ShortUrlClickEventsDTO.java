@@ -31,11 +31,14 @@ public record ShortUrlClickEventsDTO(
     var clickEventDtoList =
         paginatedClickEvents.events().items().stream().map(ClickEventDTO::from).toList();
 
-    String nextCursor =
-        Base64.getUrlEncoder()
-            .encodeToString(
-                String.valueOf(paginatedClickEvents.events().nextCursor())
-                    .getBytes(StandardCharsets.UTF_8));
+    String nextCursor = null;
+    if (paginatedClickEvents.events().nextCursor() != null) {
+      nextCursor =
+          Base64.getUrlEncoder()
+              .encodeToString(
+                  String.valueOf(paginatedClickEvents.events().nextCursor())
+                      .getBytes(StandardCharsets.UTF_8));
+    }
 
     PaginatedSlice<ClickEventDTO, String> paginatedClickEventsDto =
         new PaginatedSlice<>(clickEventDtoList, nextCursor);

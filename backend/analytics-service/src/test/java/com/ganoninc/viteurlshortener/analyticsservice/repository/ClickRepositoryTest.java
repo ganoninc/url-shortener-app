@@ -19,7 +19,10 @@ public class ClickRepositoryTest {
     ClickEvent clickEvent = FakeClickEvent.getFakeClickEvent();
     clickRepository.save(clickEvent);
 
-    ClickEvent foundClickEvent = clickRepository.findByShortIdOrderByIdAsc(clickEvent.getShortId(), Pageable.unpaged()).get(0);
+    ClickEvent foundClickEvent =
+        clickRepository
+            .findByShortIdOrderByIdDesc(clickEvent.getShortId(), Pageable.unpaged())
+            .get(0);
     assertEquals(clickEvent.getShortId(), foundClickEvent.getShortId());
   }
 }

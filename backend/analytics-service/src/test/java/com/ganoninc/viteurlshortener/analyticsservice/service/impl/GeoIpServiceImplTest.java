@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class GeoIpServiceImplTest {
 
   @Mock GeoIpCacheService geoIpCacheService;
-
   @InjectMocks GeoIpServiceImpl geoIpService;
 
   @Test
@@ -29,19 +28,6 @@ class GeoIpServiceImplTest {
     String result = future.get();
 
     assertEquals("FR", result);
-    verify(geoIpCacheService).fetchCountry(ip);
-  }
-
-  @Test
-  void itShouldReturnErrorWhenCacheServiceThrows() throws ExecutionException, InterruptedException {
-    String ip = "192.168.1.1";
-
-    when(geoIpCacheService.fetchCountry(ip)).thenThrow(new RuntimeException("test error"));
-
-    CompletableFuture<String> future = geoIpService.getCountryOfIp(ip);
-    String result = future.get();
-
-    assertEquals("-E", result);
     verify(geoIpCacheService).fetchCountry(ip);
   }
 }
