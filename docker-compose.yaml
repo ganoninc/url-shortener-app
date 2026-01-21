@@ -22,6 +22,8 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_NUM_PARTITIONS: 1
       KAFKA_HEAP_OPTS: -Xmx512M -Xms256M
+      KAFKA_LOG_RETENTION_HOURS: 24
+      KAFKA_LOG_SEGMENT_BYTES: 536870912
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
