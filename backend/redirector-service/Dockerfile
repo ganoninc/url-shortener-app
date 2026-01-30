@@ -1,7 +1,18 @@
 FROM eclipse-temurin:21-jdk-alpine AS builder
 WORKDIR /app
-COPY . .
-RUN ./mvnw clean package -DskipTests
+
+# Copy only Maven files first (maximizes cache hits)
+COPY pom.xml mvnw ./
+COPY .mvn .mvn
+
+# Shared Maven cache
+RUN --mount=type=cache,target=/root/.m2/repository \
+    ./mvnw -B -q dependency:go-offline
+
+COPY src src
+
+RUN --mount=type=cache,target=/root/.m2 \
+    ./mvnw -B -q clean package -DskipTests
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
