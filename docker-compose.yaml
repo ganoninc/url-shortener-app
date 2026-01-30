@@ -155,8 +155,7 @@ services:
     ports:
       - "8000:8000"
       - "8100:8100"
-      # - "8001:8001"
-      # - "8002:8002"
+      - "8001:8001"
     environment:
       KONG_PROXY_LISTEN: 0.0.0.0:8000
       KONG_ADMIN_LISTEN: 0.0.0.0:8001
@@ -165,7 +164,7 @@ services:
       KONG_STATUS_LISTEN: 0.0.0.0:8100
       KONG_DATABASE: "off"
       KONG_VAULTS: "env"
-      KONG_PLUGINS: bundled,jwt,jwt-claims-headers
+      KONG_PLUGINS: bundled,jwt,jwt-claims-headers,prometheus
       JWT_SECRET: ${JWT_SECRET}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
       KONG_LOG_LEVEL: debug
@@ -209,6 +208,32 @@ services:
       - COLLECTOR_OTLP_ENABLED=true
     depends_on:
       - otel-collector
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=24h" # keep 24h of metrics
+      - "--storage.tsdb.retention.size=256MB" # cap disk usage
+      - "--storage.tsdb.max-block-duration=2h" # smaller blocks → smaller memory spikes
+    depends_on:
+      - auth-service
+      - url-service
+      - redirector-service
+      - analytics-service
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
 
 volumes:
   pgdata:
